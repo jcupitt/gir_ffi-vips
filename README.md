@@ -55,3 +55,11 @@ closely.
 
 At the moment we're just exploring different gobject-introspection kits for
 Ruby and seeing how the API works out. 
+
+[gir_ffi](https://github.com/mvz/gir_ffi) looks nice and is pure ruby. 
+
+[gobject-introspection](https://rubygems.org/gems/gobject-introspection) is
+more official, but perhaps too focussed on gtk+, and needs some C. 
+
+We need to write a few test programs. 
+
