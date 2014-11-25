@@ -8,10 +8,12 @@ GirFFI.setup :Vips
 
 Vips::init $0
 
-if ARGV.length < 1
-    puts "usage: #{$0}: filename ..."
+if ARGV.length < 2
+    puts "usage: #{$0}: input-filename output-filename"
     exit 1
 end
+
+# load file
 
 name = ARGV[0]
 puts "loading file #{name}"
@@ -48,9 +50,67 @@ if op2 == nil
 end
 
 puts "fetching output ..."
-out = op2.property("out").get_value
+image = op2.property("out").get_value
 
 puts "unreffing operation"
 op2.unref_outputs()
 
-puts "image width = #{out.property("width").get_value}"
+puts "image.width = #{image.property("width").get_value}"
+
+# run an operation
+
+op = Vips::Operation::new "invert"
+if op == nil
+    puts "#{Vips::error_buffer}"
+    exit 1
+end
+
+op.set_property "in", image
+
+op2 = Vips::cache_operation_build op
+if op2 == nil
+    puts "#{Vips::error_buffer}"
+    exit 1
+end
+
+image = op2.property("out").get_value
+
+# save file
+
+name = ARGV[1]
+
+filename = Vips::filename_get_filename name
+option_string = Vips::filename_get_options name
+
+saver = Vips::Foreign::find_save filename
+if saver == nil
+    puts "#{Vips::error_buffer}"
+    exit 1
+end
+
+puts "selected saver #{saver}"
+
+op = Vips::Operation::new saver
+if op == nil
+    puts "#{Vips::error_buffer}"
+    exit 1
+end
+
+if op.set_from_string(option_string) != 0
+    puts "#{Vips::error_buffer}"
+    exit 1
+end
+
+op.set_property "in", image
+op.set_property "filename", filename
+
+puts "building ..."
+op2 = Vips::cache_operation_build op
+if op2 == nil
+    puts "#{Vips::error_buffer}"
+    exit 1
+end
+
+puts "unreffing operation"
+op2.unref_outputs()
+
