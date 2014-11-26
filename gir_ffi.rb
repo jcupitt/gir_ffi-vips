@@ -42,6 +42,12 @@ end
 
 op.set_property "filename", filename
 
+object_class = GObject.object_class_from_instance op
+props = object_class.list_properties
+
+puts "op has properties:"
+props.each {|x| puts "  #{x.name} -- #{x.get_nick}, #{x.get_blurb}"}
+
 puts "building ..."
 op2 = Vips::cache_operation_build op
 if op2 == nil

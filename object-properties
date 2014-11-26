@@ -1,0 +1,148 @@
+
+# use op.methods to see what op supports
+#
+# op = Vips::Operation::new "jpegload"
+# op.methods
+#
+# => [:get_flags, :invalidate, :argument_isset, :argument_needsstring, :build,
+# :get_argument_flags, :get_argument_priority, :get_argument_to_string,
+# :get_description, :local_cb, :preclose, :print_dump, :print_name,
+# :print_summary, :rewind, :sanity, :set_argument_from_string, :set_from_string,
+# :set_required, :set_static, :unref_outputs, :description, :description=,
+# :nickname, :nickname=, :bind_property, :bind_property_full, :force_floating,
+# :freeze_notify, :get_data, :get_qdata, :notify, :notify_by_pspec, :ref,
+# :ref_sink, :replace_data, :replace_qdata, :run_dispose, :set_data,
+# :steal_data, :steal_qdata, :thaw_notify, :unref, :watch_closure,
+# :method_missing, :signal_connect, :get_property, :set_property,
+# :get_property_extended, :get_property_with_override, :set_property_extended,
+# :set_property_with_override, :type_class, :get_property_without_override,
+# :set_property_without_override, :is_floating, :floating?, :struct, :to_ptr,
+# :setup_and_call, :==, :nil?, :===, :=~, :!~, :eql?, :hash, :<=>, :class,
+# :singleton_class, :clone, :dup, :initialize_dup, :initialize_clone, :taint,
+# :tainted?, :untaint, :untrust, :untrusted?, :trust, :freeze, :frozen?, :to_s,
+# :inspect, :methods, :singleton_methods, :protected_methods, :private_methods,
+# :public_methods, :instance_variables, :instance_variable_get,
+# :instance_variable_set, :instance_variable_defined?, :instance_of?, :kind_of?,
+# :is_a?, :tap, :send, :public_send, :respond_to?, :respond_to_missing?,
+# :extend, :display, :method, :public_method, :define_singleton_method,
+# :object_id, :to_enum, :enum_for, :equal?, :!, :!=, :instance_eval,
+# :instance_exec, :__send__, :__id__]
+#
+
+    :<=>
+    :=~
+    :==
+    :===
+    :!
+    :!~
+    :!=
+    :argument_isset
+    :argument_needsstring
+    :bind_property
+    :bind_property_full
+    :build
+    :class
+    :clone
+    :define_singleton_method
+    :description
+    :description=
+    :display
+    :dup
+    :enum_for
+    :eql?
+    :equal?
+    :extend
+    :floating?
+    :force_floating
+    :freeze
+    :freeze_notify
+    :frozen?
+    :get_argument_flags
+    :get_argument_priority
+    :get_argument_to_string
+    :get_data
+    :get_description
+    :get_flags
+    :get_property
+    :get_property_extended
+    :get_property_without_override
+    :get_property_with_override
+    :get_qdata
+    :hash
+    :__id__
+    :initialize_clone
+    :initialize_dup
+    :inspect
+    :instance_eval
+    :instance_exec
+    :instance_of?
+    :instance_variable_defined?
+    :instance_variable_get
+    :instance_variables
+    :instance_variable_set
+    :invalidate
+    :is_a?
+    :is_floating
+    :kind_of?
+    :local_cb
+    :method
+    :method_missing
+    :methods
+    :nickname
+    :nickname=
+    :nil?
+    :notify
+    :notify_by_pspec
+    :object_id
+    :preclose
+    :print_dump
+    :print_name
+    :print_summary
+    :private_methods
+    :protected_methods
+    :public_method
+    :public_methods
+    :public_send
+    :ref
+    :ref_sink
+    :replace_data
+    :replace_qdata
+    :respond_to?
+    :respond_to_missing?
+    :rewind
+    :run_dispose
+    :sanity
+    :send
+    :__send__
+    :set_argument_from_string
+    :set_data
+    :set_from_string
+    :set_property
+    :set_property_extended
+    :set_property_without_override
+    :set_property_with_override
+    :set_required
+    :set_static
+    :setup_and_call
+    :signal_connect
+    :singleton_class
+    :singleton_methods
+    :steal_data
+    :steal_qdata
+    :struct
+    :taint
+    :tainted?
+    :tap
+    :thaw_notify
+    :to_enum
+    :to_ptr
+    :to_s
+    :trust
+    :type_class
+    :unref
+    :unref_outputs
+    :untaint
+    :untrust
+    :untrusted?
+    :watch_closure
+
