@@ -45,6 +45,12 @@ op.set_property "filename", filename
 object_class = GObject.object_class_from_instance op
 props = object_class.list_properties
 
+argument_flags_names = [:required, :input, :output, :deprecated]
+argument_flags_bits = {}
+argument_flags_names.each do |name|
+    argument_flags_bits[name] = Vips::ArgumentFlags.to_native(name, 1).to_i
+end
+
 puts "op has properties:"
 props.each do |x| 
     flags = op.get_argument_flags x.name
@@ -52,9 +58,8 @@ props.each do |x|
 
     isset = op.argument_isset x.name
     desc = ""
-    [:required, :input, :output, :deprecated].each do |name|
-        bits = Vips::ArgumentFlags.to_native(name, 1).to_i
-        if flags & bits != 0
+    argument_flags_names.each do |name|
+        if flags & argument_flags_bits[name] != 0
             desc += name.to_s + " "
         end
     end
