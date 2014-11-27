@@ -46,7 +46,23 @@ object_class = GObject.object_class_from_instance op
 props = object_class.list_properties
 
 puts "op has properties:"
-props.each {|x| puts "  #{x.name} -- #{x.get_nick}, #{x.get_blurb}"}
+props.each do |x| 
+    flags = op.get_argument_flags x.name
+    flags = Vips::ArgumentFlags.to_native(flags, 1)
+
+    isset = op.argument_isset x.name
+    desc = ""
+    [:required, :input, :output, :deprecated].each do |name|
+        bits = Vips::ArgumentFlags.to_native(name, 1).to_i
+        if flags & bits != 0
+            desc += name.to_s + " "
+        end
+    end
+    # to go the other way:
+    # Vips::ArgumentFlags.from_native 2, 2
+
+    puts "  #{x.name} -- #{desc}, #{x.get_nick}, #{x.get_blurb}"
+end
 
 puts "building ..."
 op2 = Vips::cache_operation_build op
