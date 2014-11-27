@@ -58,6 +58,9 @@ props.each do |x|
             desc += name.to_s + " "
         end
     end
+    if isset 
+        desc += "isset "
+    end
     # to go the other way:
     # Vips::ArgumentFlags.from_native 2, 2
 
