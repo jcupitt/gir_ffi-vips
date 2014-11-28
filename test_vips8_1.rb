@@ -4,8 +4,9 @@ puts "starting ... "
 
 require './vips8'
 
-puts "building operation ... "
-op = Vips::Operation::new ARGV[0]
+op_name = "black"
+puts "building operation #{op_name} ... "
+op = Vips::Operation::new op_name
 if op == nil
     raise Vips::Error, 'unable to make operation'
 end
@@ -15,7 +16,20 @@ op.get_args.each do |arg|
     puts "#{arg.description}"
 end
 
-result = Vips.call "black", 100, 100, :bands => 12
+im = Vips::call "black", 100, 100, :bands => 12
+
+im2 = im.add im
+
+im = Vips::Image::new_from_file ARGV[0], :fail => true
+im.write_to_file "x.jpg"
+
+im = Vips::Image::new_from_array [1, 2, 3]
+
+im = Vips::Image::new_from_array [[4, 5], [6, 7]], 8, 9
+
+im += im2
+
+im += 4
 
 
 
