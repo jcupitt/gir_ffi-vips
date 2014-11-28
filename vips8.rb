@@ -53,11 +53,8 @@ class Argument
     end
 
     def description
-        if @flags & Vips::argument_bits[:input] != 0 
-            direction = "input"
-        else 
-            direction = "output"
-        end
+        direction = @flags & Vips::argument_bits[:input] != 0 ? 
+            "input" : "output"
 
         result = @name
         result += " " * (15 - @name.length) + " -- " + @prop.get_blurb
@@ -87,11 +84,10 @@ module Vips
 
         def to_s
             if @details != nil
-                result = @details
+                @details
             else
-                result = super.to_s
+                super.to_s
             end
-            result
         end
     end
 
@@ -99,19 +95,14 @@ module Vips
         # fetch arg list, remove boring ones, sort into priority order 
         def get_args
             object_class = GObject.object_class_from_instance self
-            props = object_class.list_properties
             io_bits = Vips::argument_bits[:input] | Vips::argument_bits[:output]
-            args = []
-            props.each do |prop|
+            props = object_class.list_properties.select do |prop|
                 flags = get_argument_flags prop.name
                 flags = Vips::ArgumentFlags.to_native flags, 1
-                if (flags & io_bits == 0) || 
-                    (flags & Vips::argument_bits[:deprecated] != 0)
-                    next
-                end
-
-                args << Argument.new(self, prop)
+                (flags & io_bits != 0) &&
+                    (flags & Vips::argument_bits[:deprecated] == 0)
             end
+            args = props.map {|x| Argument.new self, x}
             args.sort! {|a, b| a.priority - b.priority}
         end
     end
@@ -126,7 +117,7 @@ module Vips
             option_string = Vips.filename_get_options name
             loader = Vips::Foreign::find_load filename
             if loader == nil
-                raise Vips::Error, "No known loader for '#{filename}'."
+                raise Vips::Error
             end
 
             Vips::call_base loader, nil, option_string, [filename] + args
@@ -135,7 +126,7 @@ module Vips
         def self.new_from_buffer(data, option_string, *args)
             loader = Vips::Foreign::find_load_buffer data
             if loader == nil
-                raise Vips::Error, "No known loader for buffer."
+                raise Vips::Error
             end
 
             Vips::call_base loader, nil, option_string, [data] + args
@@ -198,14 +189,10 @@ module Vips
             Vips::call_base saver, self, option_string, args
         end
 
-        def +(other, *args)
+        def +(other)
             log "in + operator overload"
 
-            if other.is_a? Vips::Image
-                add(other)
-            else
-                linear(1, other)
-            end
+            other.is_a?(Vips::Image) ? add(other) : linear(1, other)
         end
 
     end
@@ -325,12 +312,11 @@ module VipsExtensions
                 x = required_input.find do |x|
                     GObject.type_is_a(x.prop.value_type, image_gtype)
                 end
-                if x
-                    x.set_value match_image, instance
-                else
+                if x == nil
                     raise Vips::Error, 
                         "No #{instance.class} argument to #{name}."
                 end
+                x.set_value match_image, instance
                 required_input.delete x
             end
 
