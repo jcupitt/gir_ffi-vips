@@ -38,8 +38,7 @@ class Argument
     end
 
     def description
-        input_bits = Vips::ArgumentFlags.to_native(:input, 1).to_i
-        if @flags & input_bits != 0 
+        if @flags & Vips::argument_bits[:input] != 0 
             direction = "input"
         else 
             direction = "output"
@@ -86,14 +85,13 @@ module Vips
         def get_args
             object_class = GObject.object_class_from_instance self
             props = object_class.list_properties
-            deprecated_bits = Vips::ArgumentFlags.to_native(:deprecated, 1).to_i
-            io_bits = Vips::ArgumentFlags.to_native(:input, 1).to_i
-            io_bits |= Vips::ArgumentFlags.to_native(:output, 1).to_i
+            io_bits = Vips::argument_bits[:input] | Vips::argument_bits[:output]
             args = []
             props.each do |prop|
                 flags = get_argument_flags prop.name
                 flags = Vips::ArgumentFlags.to_native flags, 1
-                if (flags & io_bits == 0) || (flags & deprecated_bits != 0)
+                if (flags & io_bits == 0) || 
+                    (flags & Vips::argument_bits[:deprecated] != 0)
                     next
                 end
 
@@ -116,29 +114,68 @@ end
 # use this module to extend Vips
 module VipsExtensions
     def self.included base
-        base.extend ClassMethods
+        base.extend VipsClassMethods
     end
 
-    module ClassMethods
+    module VipsClassMethods
         # need the gtypes for various vips types
         @@array_int_gtype = GObject.type_from_name "VipsArrayInt"
         def array_int_gtype 
             @@array_int_gtype
         end
 
-        #array_int_gtype = GObject.type_from_name "VipsArrayInt"
-        array_double_gtype = GObject.type_from_name "VipsArrayDouble"
-        array_image_gtype = GObject.type_from_name "VipsArrayImage"
-        blob_gtype = GObject.type_from_name "VipsBlob"
-        image_gtype = GObject.type_from_name "VipsImage"
-        operation_gtype = GObject.type_from_name "VipsOperation"
+        @@array_double_gtype = GObject.type_from_name "VipsArrayDouble"
+        def array_double_gtype 
+            @@array_double_gtype
+        end
 
-        def call(name, *args)
+        @@array_image_gtype = GObject.type_from_name "VipsArrayImage"
+        def array_image_gtype 
+            @@array_image_gtype
+        end
+
+        @@blob_gtype = GObject.type_from_name "VipsBlob"
+        def blob_gtype 
+            @@blob_gtype
+        end
+
+        @@image_gtype = GObject.type_from_name "VipsImage"
+        def image_gtype 
+            @@image_gtype
+        end
+
+        @@operation_gtype = GObject.type_from_name "VipsOperation"
+        def operation_gtype 
+            @@operation_gtype
+        end
+
+        # masks for ArgumentFlags
+        bits = {}
+        [:required, :input, :output, :deprecated].each do |name|
+            bits[name] = Vips::ArgumentFlags.to_native(name, 1).to_i
+        end
+        @@argument_bits = bits
+        def argument_bits 
+            @@argument_bits
+        end
+
+        # internal call entry ... see Vips::call for the public entry point
+        private
+        def call_base(name, self, match_image, *args)
             op = Vips::Operation.new name
 
             puts "in Vips.call"
             puts "args are:"
             args.each {|x| puts "   #{x}"}
+
+            all_args = op.get_args
+
+            # find unassigned required input args
+            required_input = all_args.filter do |arg|
+                not arg.isset and
+                (args.flags & Vips.argument_bits[:required]) != 0 and 
+                (args.flags & Vips.argument_bits[:input]) != 0 
+            end
         end
     end
 end
