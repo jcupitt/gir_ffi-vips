@@ -18,6 +18,8 @@ end
 
 im = Vips::call "black", 100, 100, :bands => 12
 
+im = Vips::Image::black 100, 100, :bands => 12
+
 im2 = im.add im
 
 im = Vips::Image::new_from_file ARGV[0], :fail => true

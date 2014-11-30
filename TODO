@@ -1,0 +1,8 @@
+- test ArrayImageConst ... can we use it as a drop-in replacement for
+  Vips::ArrayImage?
+
+  need im.cast(:uchar) to work for this, and this needs setting symbols as
+  params to enums
+
+  see note in set_value .. have opened issue on this
+

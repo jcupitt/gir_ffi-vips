@@ -28,6 +28,50 @@ def log str
     end
 end
 
+def imageize match_image, value
+    return value if match_image == nil
+    return value if value.is_a? Vips::Image
+
+    pixel = (Vips::Image.black(1, 1) + value).cast(match_image.format)
+    pixel.embed(0, 0, match_image.width, match_image.height, :extend => :copy)
+end
+
+class ArrayImageConst < Vips::ArrayImage
+    def self.new(value)
+        if not value.is_a? Array
+            value = [value]
+        end
+
+        match_image = value.find {|x| x.is_a? Vips::Image}
+        if match_image == nil
+            raise Vips::Error, "Argument must contain at least one image."
+        end
+
+        value = value.map {|x| imageize match_image, x}
+
+        super(value)
+    end
+end
+
+# if this gtype needs an array, try to transform the value into one
+def arrayize(gtype, value)
+    arrayize_map = {
+        Vips::array_double_gtype => Vips::ArrayDouble,
+        Vips::array_int_gtype => Vips::ArrayInt,
+        Vips::array_image_gtype => Vips::ArrayImage
+    }
+
+    if arrayize_map.has_key? gtype
+        if not value.is_a? Array
+            value = [value]
+        end
+
+        value = arrayize_map[gtype].new value
+    end
+
+    value
+end
+
 class Argument
     attr_reader :op, :prop, :name, :flags, :priority, :isset
 
@@ -44,6 +88,19 @@ class Argument
 
     def set_value(match_image, value)
         # insert some boxing code
+
+        # array-ize
+        value = arrayize prop.value_type, value
+
+        # enums must be unwrapped, not sure why, they are wrapped 
+        # automatically
+        puts "name = #{name}, prop = #{prop}"
+        if prop.is_a? GObject::ParamSpecEnum
+            enum_class = GObject::type_class_ref prop.value_type
+            # not sure what to do here
+            value = prop.to_native value, 1
+        end
+
         op.set_property @name, value
     end
 
@@ -53,7 +110,7 @@ class Argument
     end
 
     def description
-        direction = @flags & Vips::argument_bits[:input] != 0 ? 
+        direction = @flags & Vips::ArgumentFlags[:input] != 0 ? 
             "input" : "output"
 
         result = @name
@@ -62,6 +119,12 @@ class Argument
         result += " " + GObject.type_name(@prop.value_type)
     end
 
+end
+
+# handy for overloads ... want to be able to apply a function to an array, or 
+# to a scalar
+def smap(x, &block)
+    x.is_a?(Array) ? x.map {|x| smap(x, &block)} : block.(x)
 end
 
 # we add methods to these below, so we must load first
@@ -95,12 +158,12 @@ module Vips
         # fetch arg list, remove boring ones, sort into priority order 
         def get_args
             object_class = GObject.object_class_from_instance self
-            io_bits = Vips::argument_bits[:input] | Vips::argument_bits[:output]
+            io_bits = Vips::ArgumentFlags[:input] | Vips::ArgumentFlags[:output]
             props = object_class.list_properties.select do |prop|
                 flags = get_argument_flags prop.name
                 flags = Vips::ArgumentFlags.to_native flags, 1
                 (flags & io_bits != 0) &&
-                    (flags & Vips::argument_bits[:deprecated] == 0)
+                    (flags & Vips::ArgumentFlags[:deprecated] == 0)
             end
             args = props.map {|x| Argument.new self, x}
             args.sort! {|a, b| a.priority - b.priority}
@@ -110,6 +173,10 @@ module Vips
     class Image
         def method_missing(name, *args)
             Vips::call_base(name.to_s, self, "", args)
+        end
+
+        def self.method_missing(name, *args)
+            Vips::call_base name.to_s, nil, "", args
         end
 
         def self.new_from_file(name, *args)
@@ -190,9 +257,102 @@ module Vips
         end
 
         def +(other)
-            log "in + operator overload"
-
             other.is_a?(Vips::Image) ? add(other) : linear(1, other)
+        end
+
+        def -(other)
+            other.is_a?(Vips::Image) ? 
+                subtract(other) : linear(1, smap(other) {|x| x * -1})
+        end
+
+        def *(other)
+            other.is_a?(Vips::Image) ? multiply(other) : linear(other, 0)
+        end
+
+        def /(other)
+            other.is_a?(Vips::Image) ? 
+                divide(other) : linear(smap(other) {|x| 1.0 / x}, 0)
+        end
+
+        def %(other)
+            other.is_a?(Vips::Image) ? 
+                remainder(other) : remainder_const(other)
+        end
+
+        def **(other)
+            other.is_a?(Vips::Image) ? 
+                math2(other, :pow) : math2_const(other, :pow)
+        end
+
+        def <<(other)
+            other.is_a?(Vips::Image) ? 
+                boolean(other, :lshift) : boolean_const(other, :lshift)
+        end
+
+        def >>(other)
+            other.is_a?(Vips::Image) ? 
+                boolean(other, :rshift) : boolean_const(other, :rshift)
+        end
+
+        def |(other)
+            other.is_a?(Vips::Image) ? 
+                boolean(other, :or) : boolean_const(other, :or)
+        end
+
+        def &(other)
+            other.is_a?(Vips::Image) ? 
+                boolean(other, :and) : boolean_const(other, :and)
+        end
+
+        def ^(other)
+            other.is_a?(Vips::Image) ? 
+                boolean(other, :eor) : boolean_const(other, :eor)
+        end
+
+        def !
+            self ^ -1
+        end
+
+        def ~
+            self ^ -1
+        end
+
+        def +@
+            self
+        end
+
+        def -@
+            self * -1
+        end
+
+        def <(other)
+            other.is_a?(Vips::Image) ? 
+                relational(other, :less) : relational_const(other, :less)
+        end
+
+        def <=(other)
+            other.is_a?(Vips::Image) ? 
+                relational(other, :lesseq) : relational_const(other, :lesseq)
+        end
+
+        def >(other)
+            other.is_a?(Vips::Image) ? 
+                relational(other, :more) : relational_const(other, :more)
+        end
+
+        def >(other)
+            other.is_a?(Vips::Image) ? 
+                relational(other, :moreeq) : relational_const(other, :moreeq)
+        end
+
+        def ==(other)
+            other.is_a?(Vips::Image) ? 
+                relational(other, :equal) : relational_const(other, :equal)
+        end
+
+        def !=(other)
+            other.is_a?(Vips::Image) ? 
+                relational(other, :noteq) : relational_const(other, :noteq)
         end
 
     end
@@ -235,16 +395,6 @@ module VipsExtensions
         @@operation_gtype = GObject.type_from_name "VipsOperation"
         def operation_gtype 
             @@operation_gtype
-        end
-
-        # masks for ArgumentFlags
-        bits = {}
-        [:required, :input, :output, :deprecated, :modify].each do |name|
-            bits[name] = Vips::ArgumentFlags.to_native(name, 1).to_i
-        end
-        @@argument_bits = bits
-        def argument_bits 
-            @@argument_bits
         end
 
         # internal call entry ... see Vips::call for the public entry point
@@ -303,8 +453,8 @@ module VipsExtensions
             # find unassigned required input args
             required_input = all_args.select do |arg|
                 not arg.isset and
-                (arg.flags & Vips.argument_bits[:input]) != 0 and
-                (arg.flags & Vips.argument_bits[:required]) != 0 
+                (arg.flags & Vips::ArgumentFlags[:input]) != 0 and
+                (arg.flags & Vips::ArgumentFlags[:required]) != 0 
             end
 
             # do we have a non-nil instance? set the first image arg with this
@@ -334,30 +484,37 @@ module VipsExtensions
             # find optional unassigned input args
             optional_input = all_args.select do |arg|
                 not arg.isset and
-                (arg.flags & Vips.argument_bits[:input]) != 0 and
-                (arg.flags & Vips.argument_bits[:required]) == 0 
+                (arg.flags & Vips::ArgumentFlags[:input]) != 0 and
+                (arg.flags & Vips::ArgumentFlags[:required]) == 0 
             end
 
             # make a hash from name to arg
-            optional_input = Hash.new 
-                optional_input.map(&:name).zip(optional_input)
+            optional_input = Hash[
+                optional_input.map(&:name).zip(optional_input)]
 
             # find optional unassigned output args
             optional_output = all_args.select do |arg|
                 not arg.isset and
-                (arg.flags & Vips.argument_bits[:output]) != 0 and
-                (arg.flags & Vips.argument_bits[:required]) == 0 
+                (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
+                (arg.flags & Vips::ArgumentFlags[:required]) == 0 
             end
-            optional_output = Hash.new 
-                optional_output.map(&:name).zip(optional_output)
+            optional_output = Hash[
+                optional_output.map(&:name).zip(optional_output)]
 
             # set all optional args
+            log "setting optional values ..."
             optional_values.each do |name, value|
+                # we are passed symbols as keys
+                name = name.to_s
+                log "setting #{name} to #{value}"
                 if optional_input.has_key? name
+                    log "setting #{name} to #{value}"
                     optional_input[name].set_value match_image, value
                 elsif optional_output.has_key? name and value != true
                     raise Vips::Error, 
                         "Optional output argument #{name} must be true."
+                elsif not optional_output.has_key? name 
+                    raise Vips::Error, "No such option '#{name}',"
                 end
             end
 
@@ -374,11 +531,11 @@ module VipsExtensions
                 # find optional unassigned output args
                 optional_output = all_args.select do |arg|
                     not arg.isset and
-                    (arg.flags & Vips.argument_bits[:output]) != 0 and
-                    (arg.flags & Vips.argument_bits[:required]) == 0 
+                    (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
+                    (arg.flags & Vips::ArgumentFlags[:required]) == 0 
                 end
-                optional_output = Hash.new 
-                    optional_output.map(&:name).zip(optional_output)
+                optional_output = Hash[
+                    optional_output.map(&:name).zip(optional_output)]
             end
 
             # gather output args 
@@ -386,21 +543,23 @@ module VipsExtensions
 
             all_args.each do |arg|
                 # required output
-                if (arg.flags & Vips.argument_bits[:output]) != 0 and
-                    (arg.flags & Vips.argument_bits[:required]) != 0 
+                if (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
+                    (arg.flags & Vips::ArgumentFlags[:required]) != 0 
                     out << arg.get_value
                 end
 
                 # modified input arg ... this will get the result of the 
                 # copy() we did in Argument.set_value above
-                if (arg.flags & Vips.argument_bits[:input]) != 0 and
-                    (arg.flags & Vips.argument_bits[:modify]) != 0 
+                if (arg.flags & Vips::ArgumentFlags[:input]) != 0 and
+                    (arg.flags & Vips::ArgumentFlags[:modify]) != 0 
                     out << arg.get_value
                 end
             end
 
             out_dict = {}
             optional_values.each do |name, value|
+                # we are passed symbols as keys
+                name = name.to_s
                 if optional_output.has_key? name
                     out_dict[name] = optional_output[name].get_value
                 end
@@ -427,6 +586,7 @@ module VipsExtensions
         def call(name, *args)
             call_base name, nil, "", args
         end
+
     end
 end
 
