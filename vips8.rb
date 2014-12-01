@@ -101,12 +101,35 @@ class Argument
             value = prop.to_native value, 1
         end
 
+        # blob-ize
+        if GObject.type_is_a(prop.value_type, Vips::blob_gtype)
+            if not value.is_a? Vips::Blob
+                value = Vips::Blob.new(nil, value)
+            end
+        end
+
+        # add imageize, when it's working
+
+        # MODIFY input images need to be copied before assigning them
+        if (flags & Vips::ArgumentFlags[:modify]) != 0
+            # don't use .copy(): we want to make a new pipeline with no
+            # reference back to the old stuff ... this way we can free the
+            # previous image earlier 
+            new_image = Vips::Image.new_memory
+            value.write new_image
+            value = new_image
+        end
+
         op.set_property @name, value
     end
 
     def get_value
-        # insert some unboxing code
-        @op.property(@name).get_value
+        value = @op.property(@name).get_value
+
+        # unblob
+        if value.is_a? Vips::Blob
+            value = value.get
+        end
     end
 
     def description
@@ -132,6 +155,8 @@ Vips.load_class :Operation
 Vips.load_class :Image
 
 module Vips
+    # we also add some stuff directly to Vips::, see VipsExtensions below
+
     # automatically grab the vips error buffer, if no message is supplied
     class Error < RuntimeError
         def initialize(msg = nil)
@@ -346,20 +371,31 @@ module Vips
         end
 
         def ==(other)
-            other.is_a?(Vips::Image) ? 
-                relational(other, :equal) : relational_const(other, :equal)
+            if other == nil
+                false
+            elsif other.is_a?(Vips::Image)  
+                relational(other, :equal) 
+            else
+                relational_const(other, :equal)
+            end
         end
 
         def !=(other)
-            other.is_a?(Vips::Image) ? 
-                relational(other, :noteq) : relational_const(other, :noteq)
+            if other == nil
+                true
+            elsif other.is_a?(Vips::Image) 
+                relational(other, :noteq) 
+            else
+                relational_const(other, :noteq)
+            end
         end
 
     end
 
 end
 
-# use this module to extend Vips
+# use this module to extend Vips ... we can't do this in the "module Vips"
+# block above, for some reason
 module VipsExtensions
     def self.included base
         base.extend VipsClassMethods

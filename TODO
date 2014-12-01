@@ -1,3 +1,11 @@
+- need im.write(im)
+
+- try
+
+	$ ./test_vips8_1.rb
+	./test_vips8_1.rb:23:in `<main>': undefined method `add' for nil:NilClass (NoMethodError)
+
+
 - test ArrayImageConst ... can we use it as a drop-in replacement for
   Vips::ArrayImage?
 
