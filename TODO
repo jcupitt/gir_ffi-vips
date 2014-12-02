@@ -1,4 +1,8 @@
-- need extra imageize overrides for ifthenelse
+- need set_value() / get_value() to get / set metadata items
+
+- more rdoc comments
+
+  something to make rdoc comments for dynamic vips operations?
 
 - test ArrayImageConst ... can we use it as a drop-in replacement for
   Vips::ArrayImage?

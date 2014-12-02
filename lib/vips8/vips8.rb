@@ -2,7 +2,7 @@
 # used via the gir_ffi gem. 
 #
 # Author::    John Cupitt  (mailto:jcupitt@gmail.com)
-# License::   LGPL 2.1+
+# License::   MIT
 
 # about as crude as you could get
 $debug = true
@@ -149,7 +149,8 @@ end
 Vips::load_class :Operation
 Vips::load_class :Image
 
-# Define set of overrides for the Vips module. 
+# This module provides a set of overrides for the vips image processing library
+# used via the gir_ffi gem. 
 
 module Vips
 
@@ -162,7 +163,7 @@ module Vips
 
     public
 
-    # Automatically grab the vips error buffer, if no message is supplied.
+    # If @msg is not supplied, grab and clear the vips error buffer instead. 
 
     class Error < RuntimeError
         def initialize(msg = nil)
@@ -186,7 +187,7 @@ module Vips
     end
 
     class Operation
-        # fetch arg list, remove boring ones, sort into priority order 
+        # Fetch arg list, remove boring ones, sort into priority order.
         def get_args
             object_class = GObject::object_class_from_instance self
             io_bits = Vips::ArgumentFlags[:input] | Vips::ArgumentFlags[:output]
@@ -387,6 +388,9 @@ module Vips
         return out
     end
 
+    # call-seq:
+    #   call( operation_name, required_arg1, ..., required_argn, optional_args ) => result
+    #
     # This is the public entry point for the vips8 binding. Vips::call will run
     # any vips operation, for example
     #
@@ -395,30 +399,94 @@ module Vips
     # will call the C function 
     #
     #   vips_black( &out, 100, 100, "bands", 12, NULL );
+    # 
+    # There are Vips::Image#method_missing hooks which will run ::call for you 
+    # on Vips::Image for undefined instance or class methods. So you can also 
+    # write:
+    #
+    #   out = Vips::Image.black 100, 100, :bands => 12
+    #
+    # Or perhaps:
+    #
+    #   x = Vips::Image.black 100, 100
+    #   y = x.invert
+    #
+    # to run the vips_invert() operator.
+    #
+    # There are also a set of operator overloads and some convenience functions,
+    # see Vips::Image. 
+    #
+    # == Other features
+    #
+    # === Automatic constant expansion
+    #
+    # If the operator needs a vector constant, ::call will turn a scalar into a
+    # vector for you. So for x.linear(a, b), which calculates x * a + b where a
+    # and b are vector constants, you can write:
+    #
+    #   x = Vips::Image.black 100, 100, bands => 3
+    #   y = x.linear(1, 2)
+    #   y = x.linear([1], 4)
+    #   y = x.linear([1, 2, 3], 4)
+    #
+    # or any other combination. The operator overloads use this facility to
+    # support all the variations on:
+    #
+    #   x = Vips::Image.black 100, 100, bands => 3
+    #   y = x * 2
+    #   y = x + [1,2,3]
+    #   y = x % [1]
+    #
+    # Similarly, whereever an image is required, you can use a constant. The
+    # constant will be expanded to an image matching the first input image
+    # argument. For example, you can write:
+    #
+    #   x = Vips::Image.black 100, 100, bands => 3
+    #   y = x.bandjoin(255)
+    #
+    # to add an extra band to the image where each pixel in the new band has 
+    # the constant value 255. 
+
     public
     def self.call(name, *args)
         Vips::call_base name, nil, "", args
     end
 
+    # The Vips::Image class
+    #
+    # === Enum expansion
+    #
+    # Many vips operations implement a range of functions, with the function 
+    # selected by an enum. For example, in C you can write:
+    #
+    #   vips_math( in, &out, VIPS_OPERATION_MATH_SIN, NULL );
+    #
+    # to calculate the sin() of every pixel. 
+
     class Image
-        # handy for overloads ... want to be able to apply a function to an 
-        # array, or to a scalar
         private
+
+        # handy for overloads ... want to be able to apply a function to an 
+        # array or to a scalar
         def self.smap(x, &block)
             x.is_a?(Array) ? x.map {|x| smap(x, &block)} : block.(x)
         end
 
         public
+
+        # Invoke a vips operation with Vips::call, using #self as the first 
+        # input image argument. 
         def method_missing(name, *args)
             Vips::call_base(name.to_s, self, "", args)
         end
 
+        # Invoke a vips operation with ::call.
         def self.method_missing(name, *args)
             Vips::call_base name.to_s, nil, "", args
         end
 
-        # Return a new Vips::Image for a file on disc. It can load any
-        # format supported by vips. The filename can include
+        # Return a new Vips::Image for a file on disc. This method can load
+        # images in any format supported by vips. The filename can include
         # load options, for example:
         #
         #   image = Vips::new_from_file "fred.jpg[shrink=2]"
@@ -430,7 +498,7 @@ module Vips
         # The options available depend upon the load operation that will be
         # executed. Try:
         #
-        #   $ vips jopegload
+        #   $ vips jpegload
         #
         # at the command-line to see a summary of the available options.
         def self.new_from_file(name, *args)
@@ -444,6 +512,8 @@ module Vips
             Vips::call_base loader, nil, option_string, [filename] + args
         end
 
+        # Create a new Vips::Image for an image encoded in a format, such as
+        # JPEG, in a memory string. 
         def self.new_from_buffer(data, option_string, *args)
             loader = Vips::Foreign.find_load_buffer data
             if loader == nil
@@ -453,6 +523,7 @@ module Vips
             Vips::call_base loader, nil, option_string, [data] + args
         end
 
+        # Create a new Vips::Image from a 1D or 2D array . 
         def self.new_from_array(array, scale = 1, offset = 0)
             # we accept a 1D array and assume height == 1, or a 2D array
             # and check all lines are the same length
@@ -617,6 +688,117 @@ module Vips
             else
                 relational_const(other, :noteq)
             end
+        end
+
+        # Return the largest integral value not greater than the argument.
+        def floor
+            round Vips::OperationRound[:floor]
+
+        # Return the smallest integral value not less than the argument.
+        def ceil
+            round Vips::OperationRound[:ceil]
+
+        # Return the nearest integral value.
+        def rint
+            round Vips::OperationRound[:rint]
+
+        # Split an n-band image into n separate images.
+        def bandsplit
+            (0...bands).map {|i| extract_band(i)}
+
+        # Join a set of images bandwise.
+        def bandjoin(other)
+            if not other.is_a? Array
+                other = [other]
+            end
+
+            Vips::Image.bandjoin([self] + other)
+
+        # Return the coordinates of the image maximum.
+        def maxpos
+            v, opts = max :x => True, :y => True
+            x = opts['x']
+            y = opts['y']
+            return v, x, y
+
+        # Return the coordinates of the image minimum.
+        def minpos
+            v, opts = min :x = True, :y = True
+            x = opts['x']
+            y = opts['y']
+            return v, x, y
+
+        # Return the real part of a complex image.
+        def real
+            complexget Vips::OperationComplexget[:real]
+
+        # Return the imaginary part of a complex image.
+        def imag
+            complexget Vips::OperationComplexget[:imag]
+
+        # Return an image converted to polar coordinates.
+        def polar
+            complex Vips::OperationComplex[:polar]
+
+        # Return an image converted to rectangular coordinates.
+        def rect
+            complex Vips::OperationComplex[:rect] 
+
+        # Return the complex conjugate of an image.
+        def conj
+            complex Vips::OperationComplex[:conj] 
+
+        # Return the sine of an image in degrees.
+        def sin
+            math Vips::OperationMath[:sin] 
+
+        # Return the cosine of an image in degrees.
+        def cos
+            math Vips::OperationMath[:cos]
+
+        # Return the tangent of an image in degrees.
+        def tan
+            math Vips::OperationMath[:tan]
+
+        # Return the inverse sine of an image in degrees.
+        def asin
+            math Vips::OperationMath[:asin]
+
+        # Return the inverse cosine of an image in degrees.
+        def acos
+            math Vips::OperationMath[:acos]
+
+        # Return the inverse tangent of an image in degrees.
+        def atan
+            math Vips::OperationMath[:atan]
+
+        # Return the natural log of an image.
+        def log
+            math Vips::OperationMath[:log]
+
+        # Return the log base 10 of an image.
+        def log10
+            math Vips::OperationMath[:log10]
+
+        # Return e ** pixel.
+        def exp
+            math Vips::OperationMath[:exp]
+
+        # Return 10 ** pixel.
+        def exp10
+            math Vips::OperationMath[:exp10]
+
+        def ifthenelse(th, el, *args) 
+            match_image = [th, el, self].find {|x| x.is_a? Vips::Image}
+
+            if not th.is_a? Vips.Image
+                th = imageize match_image, th
+            end
+            if not el.is_a? Vips::Image
+                el = imageize match_image, el
+            end
+
+            call_base "ifthenelse", self, "", [th, el] + args
         end
 
     end
