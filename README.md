@@ -1,10 +1,20 @@
 ruby-vips8
 ==========
 
-Ruby binding for the vips8 API
+Ruby binding for the vips8 API.
 
-Not much here yet, but this where it should happen. If you want something that
-works, you need [ruby-vips](https://github.com/jcupitt/ruby-vips).
+It works, sort-of, but still has missing chunks.  If you want something
+that really works, you need [ruby-vips](https://github.com/jcupitt/ruby-vips).
+
+# To try it out
+
+Install with:
+
+```bash
+$ rake install
+```
+
+Then take a look in `examples/`. 
 
 # What's wrong with ruby-vips?
 
@@ -45,23 +55,4 @@ There are some more minor pluses as well:
   ruby-vips had to work hard to offer a nice loader system, but that's all
   built into vips8. It can do things like load and save formatted images to 
   and from memory buffers as well, which just wasn't possible before. 
-
-# Plan
-
-There's a full [vips8 Python
-binding](https://github.com/jcupitt/libvips/tree/master/python). The idea is
-just to redo that in Ruby. I expect it'll parallel the Python one rather
-closely. 
-
-At the moment we're just exploring different gobject-introspection kits for
-Ruby and seeing how the API works out. 
-
-[gir_ffi](https://github.com/mvz/gir_ffi) looks nice and seems to work. 
-
-[gobject-introspection](https://rubygems.org/gems/gobject-introspection) is
-more official, but doesn't seem to have something like overrides. Instead, you
-define a loader and a set of methods which rewrite stuff during the loading
-process. 
-
-We need to write a few test programs. 
 

@@ -2,7 +2,7 @@
 
 puts "starting ... "
 
-require 'ruby-vips8'
+require 'vips8'
 
 op_name = "black"
 puts "building operation #{op_name} ... "
