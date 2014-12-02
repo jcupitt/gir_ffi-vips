@@ -2,9 +2,10 @@
 
 - try
 
-	$ ./test_vips8_1.rb
-	./test_vips8_1.rb:23:in `<main>': undefined method `add' for nil:NilClass (NoMethodError)
-
+	> require './vips8'
+	=> true
+	> im = Vips::Image::black 100, 100, :bands => 12
+	=> nil
 
 - test ArrayImageConst ... can we use it as a drop-in replacement for
   Vips::ArrayImage?

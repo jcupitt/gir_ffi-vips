@@ -94,7 +94,6 @@ class Argument
 
         # enums must be unwrapped, not sure why, they are wrapped 
         # automatically
-        puts "name = #{name}, prop = #{prop}"
         if prop.is_a? GObject::ParamSpecEnum
             enum_class = GObject::type_class_ref prop.value_type
             # not sure what to do here
@@ -130,6 +129,8 @@ class Argument
         if value.is_a? Vips::Blob
             value = value.get
         end
+
+        value
     end
 
     def description
@@ -205,9 +206,9 @@ module Vips
         end
 
         def self.new_from_file(name, *args)
-            filename = Vips.filename_get_filename name
-            option_string = Vips.filename_get_options name
-            loader = Vips::Foreign::find_load filename
+            filename = Vips::filename_get_filename name
+            option_string = Vips::filename_get_options name
+            loader = Vips::Foreign.find_load filename
             if loader == nil
                 raise Vips::Error
             end
@@ -216,7 +217,7 @@ module Vips
         end
 
         def self.new_from_buffer(data, option_string, *args)
-            loader = Vips::Foreign::find_load_buffer data
+            loader = Vips::Foreign.find_load_buffer data
             if loader == nil
                 raise Vips::Error
             end
@@ -250,7 +251,7 @@ module Vips
                 raise Vips::Error, "Not all array elements are Numeric."
             end
 
-            image = Vips::Image::new_matrix_from_array width, height, array
+            image = Vips::Image.new_matrix_from_array width, height, array
 
             # be careful to set them as double
             image.set_double 'scale', scale.to_f
@@ -262,7 +263,7 @@ module Vips
         def write_to_file(name, *args)
             filename = Vips.filename_get_filename name
             option_string = Vips.filename_get_options name
-            saver = Vips::Foreign::find_save filename
+            saver = Vips::Foreign.find_save filename
             if saver == nil
                 raise Vips::Error, "No known saver for '#{filename}'."
             end
@@ -273,7 +274,7 @@ module Vips
         def write_to_buffer(format_string, *args)
             filename = Vips.filename_get_filename format_string
             option_string = Vips.filename_get_options format_string
-            saver = Vips::Foreign::find_save_buffer filename
+            saver = Vips::Foreign.find_save_buffer filename
             if saver == nil
                 raise Vips::Error, "No known saver for '#{filename}'."
             end
@@ -542,7 +543,6 @@ module VipsExtensions
             optional_values.each do |name, value|
                 # we are passed symbols as keys
                 name = name.to_s
-                log "setting #{name} to #{value}"
                 if optional_input.has_key? name
                     log "setting #{name} to #{value}"
                     optional_input[name].set_value match_image, value
@@ -581,6 +581,7 @@ module VipsExtensions
                 # required output
                 if (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
                     (arg.flags & Vips::ArgumentFlags[:required]) != 0 
+                    log "fetching required output #{arg.name}"
                     out << arg.get_value
                 end
 
