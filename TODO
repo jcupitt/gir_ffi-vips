@@ -1,11 +1,4 @@
-- need im.write(im)
-
-- try
-
-	> require './vips8'
-	=> true
-	> im = Vips::Image::black 100, 100, :bands => 12
-	=> nil
+- need extra imageize overrides for ifthenelse
 
 - test ArrayImageConst ... can we use it as a drop-in replacement for
   Vips::ArrayImage?
