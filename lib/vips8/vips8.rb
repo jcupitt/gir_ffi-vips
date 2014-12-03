@@ -496,12 +496,20 @@ module Vips
         #   image = Vips::new_from_file "fred.jpg", :shrink => 2
         #
         # The options available depend upon the load operation that will be
-        # executed. Try:
+        # executed. Try something like:
         #
         #   $ vips jpegload
         #
         # at the command-line to see a summary of the available options.
+        #
+        # Loading is fast: only enough of the image is loaded to be able to fill
+        # out the header. Pixels will only be processed when they are needed.
         def self.new_from_file(name, *args)
+            # very common, and Vips::filename_get_filename will segv if we pass
+            # this
+            if name == nil
+                raise Error, "filename is nil"
+            end
             filename = Vips::filename_get_filename name
             option_string = Vips::filename_get_options name
             loader = Vips::Foreign.find_load filename
@@ -513,7 +521,24 @@ module Vips
         end
 
         # Create a new Vips::Image for an image encoded in a format, such as
-        # JPEG, in a memory string. 
+        # JPEG, in a memory string. Load options may be passed encoded as
+        # strings, or appended as a hash. For example:
+        #
+        #   image = Vips::new_from_from_buffer memory_buffer, "shrink=2"
+        # 
+        # or alternatively:
+        #
+        #   image = Vips::new_from_from_buffer memory_buffer, "", :shrink => 2
+        #
+        # The options available depend on the file format. Try something like:
+        #
+        #   $ vips jpegload_buffer
+        #
+        # at the command-line to see the availeble options. Only JPEG, PNG and
+        # TIFF images can be read from memory buffers. 
+        #
+        # Loading is fast: only enough of the image is loaded to be able to fill
+        # out the header. Pixels will only be processed when they are needed.
         def self.new_from_buffer(data, option_string, *args)
             loader = Vips::Foreign.find_load_buffer data
             if loader == nil
@@ -523,7 +548,23 @@ module Vips
             Vips::call_base loader, nil, option_string, [data] + args
         end
 
-        # Create a new Vips::Image from a 1D or 2D array . 
+        # Create a new Vips::Image from a 1D or 2D array. A 1D array becomes an
+        # image with height 1. Use #scale and #offset to set the scale and
+        # offset fields in the header. These are useful for integer
+        # convolutions. 
+        #
+        # For example:
+        #
+        #   image = Vips::new_from_from_array [1, 2, 3]
+        #
+        # or
+        #
+        #   image = Vips::new_from_from_array [
+        #       [-1, -1, -1],
+        #       [-1, 16, -1],
+        #       [-1, -1, -1]], 8
+        #
+        # for a simple sharpening mask.
         def self.new_from_array(array, scale = 1, offset = 0)
             # we accept a 1D array and assume height == 1, or a 2D array
             # and check all lines are the same length
@@ -559,6 +600,20 @@ module Vips
             return image
         end
 
+        # Write this image to a file. Save options may be encoded in the
+        # filename or given as a hash. For example:
+        #
+        #   image.write_to_file "fred.jpg[Q=90]"
+        #
+        # or equivalently:
+        #
+        #   image.write_to_file "fred.jpg", :Q => 90
+        #
+        # The save options depend on the selected saver. Try something like:
+        #
+        #   $ vips jpegsave
+        #
+        # to see all the available options. 
         def write_to_file(name, *args)
             filename = Vips::filename_get_filename name
             option_string = Vips::filename_get_options name
@@ -570,6 +625,20 @@ module Vips
             Vips::call_base saver, self, option_string, [filename] + args
         end
 
+        # Write this image to a memory buffer. Save options may be encoded in 
+        # the format_string or given as a hash. For example:
+        #
+        #   buffer = image.write_to_buffer ".jpg[Q=90]"
+        #
+        # or equivalently:
+        #
+        #   image.write_to_buffer ".jpg", :Q => 90
+        #
+        # The save options depend on the selected saver. Try something like:
+        #
+        #   $ vips jpegsave
+        #
+        # to see all the available options. 
         def write_to_buffer(format_string, *args)
             filename = Vips::filename_get_filename format_string
             option_string = Vips::filename_get_options format_string
@@ -581,63 +650,76 @@ module Vips
             Vips::call_base saver, self, option_string, args
         end
 
+        # Add an image, constant or array. 
         def +(other)
             other.is_a?(Vips::Image) ? add(other) : linear(1, other)
         end
 
+        # Subtract an image, constant or array. 
         def -(other)
             other.is_a?(Vips::Image) ? 
                 subtract(other) : linear(1, smap(other) {|x| x * -1})
         end
 
+        # Multiply an image, constant or array. 
         def *(other)
             other.is_a?(Vips::Image) ? multiply(other) : linear(other, 0)
         end
 
+        # Divide an image, constant or array. 
         def /(other)
             other.is_a?(Vips::Image) ? 
                 divide(other) : linear(smap(other) {|x| 1.0 / x}, 0)
         end
 
+        # Remainder after integer division with an image, constant or array. 
         def %(other)
             other.is_a?(Vips::Image) ? 
                 remainder(other) : remainder_const(other)
         end
 
+        # Raise to power of an image, constant or array. 
         def **(other)
             other.is_a?(Vips::Image) ? 
                 math2(other, :pow) : math2_const(other, :pow)
         end
 
+        # Integer left shift with an image, constant or array. 
         def <<(other)
             other.is_a?(Vips::Image) ? 
                 boolean(other, :lshift) : boolean_const(other, :lshift)
         end
 
+        # Integer right shift with an image, constant or array. 
         def >>(other)
             other.is_a?(Vips::Image) ? 
                 boolean(other, :rshift) : boolean_const(other, :rshift)
         end
 
+        # Integer bitwise OR with an image, constant or array. 
         def |(other)
             other.is_a?(Vips::Image) ? 
                 boolean(other, :or) : boolean_const(other, :or)
         end
 
+        # Integer bitwise AND with an image, constant or array. 
         def &(other)
             other.is_a?(Vips::Image) ? 
                 boolean(other, :and) : boolean_const(other, :and)
         end
 
+        # Integer bitwise EOR with an image, constant or array. 
         def ^(other)
             other.is_a?(Vips::Image) ? 
                 boolean(other, :eor) : boolean_const(other, :eor)
         end
 
+        # Equivalent to image ^ -1
         def !
             self ^ -1
         end
 
+        # Equivalent to image ^ -1
         def ~
             self ^ -1
         end
@@ -646,30 +728,36 @@ module Vips
             self
         end
 
+        # Equivalent to image * -1
         def -@
             self * -1
         end
 
+        # Relational less than with an image, constant or array. 
         def <(other)
             other.is_a?(Vips::Image) ? 
                 relational(other, :less) : relational_const(other, :less)
         end
 
+        # Relational less than or equal to with an image, constant or array. 
         def <=(other)
             other.is_a?(Vips::Image) ? 
                 relational(other, :lesseq) : relational_const(other, :lesseq)
         end
 
+        # Relational more than with an image, constant or array. 
         def >(other)
             other.is_a?(Vips::Image) ? 
                 relational(other, :more) : relational_const(other, :more)
         end
 
+        # Relational more than or equal to with an image, constant or array. 
         def >(other)
             other.is_a?(Vips::Image) ? 
                 relational(other, :moreeq) : relational_const(other, :moreeq)
         end
 
+        # Compare equality to nil, an image, constant or array.
         def ==(other)
             if other == nil
                 false
@@ -680,6 +768,7 @@ module Vips
             end
         end
 
+        # Compare inequality to nil, an image, constant or array.
         def !=(other)
             if other == nil
                 true
@@ -693,18 +782,22 @@ module Vips
         # Return the largest integral value not greater than the argument.
         def floor
             round Vips::OperationRound[:floor]
+        end
 
         # Return the smallest integral value not less than the argument.
         def ceil
             round Vips::OperationRound[:ceil]
+        end
 
         # Return the nearest integral value.
         def rint
             round Vips::OperationRound[:rint]
+        end
 
         # Split an n-band image into n separate images.
         def bandsplit
             (0...bands).map {|i| extract_band(i)}
+        end
 
         # Join a set of images bandwise.
         def bandjoin(other)
@@ -713,6 +806,7 @@ module Vips
             end
 
             Vips::Image.bandjoin([self] + other)
+        end
 
         # Return the coordinates of the image maximum.
         def maxpos
@@ -720,74 +814,100 @@ module Vips
             x = opts['x']
             y = opts['y']
             return v, x, y
+        end
 
         # Return the coordinates of the image minimum.
         def minpos
-            v, opts = min :x = True, :y = True
+            v, opts = min :x => True, :y => True
             x = opts['x']
             y = opts['y']
             return v, x, y
+        end
 
         # Return the real part of a complex image.
         def real
             complexget Vips::OperationComplexget[:real]
+        end
 
         # Return the imaginary part of a complex image.
         def imag
             complexget Vips::OperationComplexget[:imag]
+        end
 
         # Return an image converted to polar coordinates.
         def polar
             complex Vips::OperationComplex[:polar]
+        end
 
         # Return an image converted to rectangular coordinates.
         def rect
             complex Vips::OperationComplex[:rect] 
+        end
 
         # Return the complex conjugate of an image.
         def conj
             complex Vips::OperationComplex[:conj] 
+        end
 
         # Return the sine of an image in degrees.
         def sin
             math Vips::OperationMath[:sin] 
+        end
 
         # Return the cosine of an image in degrees.
         def cos
             math Vips::OperationMath[:cos]
+        end
 
         # Return the tangent of an image in degrees.
         def tan
             math Vips::OperationMath[:tan]
+        end
 
         # Return the inverse sine of an image in degrees.
         def asin
             math Vips::OperationMath[:asin]
+        end
 
         # Return the inverse cosine of an image in degrees.
         def acos
             math Vips::OperationMath[:acos]
+        end
 
         # Return the inverse tangent of an image in degrees.
         def atan
             math Vips::OperationMath[:atan]
+        end
 
         # Return the natural log of an image.
         def log
             math Vips::OperationMath[:log]
+        end
 
         # Return the log base 10 of an image.
         def log10
             math Vips::OperationMath[:log10]
+        end
 
         # Return e ** pixel.
         def exp
             math Vips::OperationMath[:exp]
+        end
 
         # Return 10 ** pixel.
         def exp10
             math Vips::OperationMath[:exp10]
+        end
 
+        # call-seq:
+        #   condition-image.ifthenelse(then-image, else-image) => image
+        #   condition-image.ifthenelse(then-constant, else-image) => image
+        #   condition-image.ifthenelse(then-array, else-image) => image
+        #   etc.
+        #
+        # Select pixels from then if condition is #true and from else if
+        # condition is #false. Use the :blend option to fade smoothly 
+        # between then and else. 
         def ifthenelse(th, el, *args) 
             match_image = [th, el, self].find {|x| x.is_a? Vips::Image}
 
