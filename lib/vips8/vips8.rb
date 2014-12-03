@@ -416,10 +416,6 @@ module Vips
     # There are also a set of operator overloads and some convenience functions,
     # see Vips::Image. 
     #
-    # == Other features
-    #
-    # === Automatic constant expansion
-    #
     # If the operator needs a vector constant, ::call will turn a scalar into a
     # vector for you. So for x.linear(a, b), which calculates x * a + b where a
     # and b are vector constants, you can write:
@@ -451,17 +447,6 @@ module Vips
     def self.call(name, *args)
         Vips::call_base name, nil, "", args
     end
-
-    # The Vips::Image class
-    #
-    # === Enum expansion
-    #
-    # Many vips operations implement a range of functions, with the function 
-    # selected by an enum. For example, in C you can write:
-    #
-    #   vips_math( in, &out, VIPS_OPERATION_MATH_SIN, NULL );
-    #
-    # to calculate the sin() of every pixel. 
 
     class Image
         private
@@ -794,11 +779,19 @@ module Vips
             round Vips::OperationRound[:rint]
         end
 
+        # call-seq:
+        #   bandsplit => [image]
+        #
         # Split an n-band image into n separate images.
         def bandsplit
             (0...bands).map {|i| extract_band(i)}
         end
 
+        # call-seq:
+        #   bandjoin(image) => image
+        #   bandjoin(const_array) => image
+        #   bandjoin(image_array) => image
+        #
         # Join a set of images bandwise.
         def bandjoin(other)
             if not other.is_a? Array
@@ -899,15 +892,9 @@ module Vips
             math Vips::OperationMath[:exp10]
         end
 
-        # call-seq:
-        #   condition-image.ifthenelse(then-image, else-image) => image
-        #   condition-image.ifthenelse(then-constant, else-image) => image
-        #   condition-image.ifthenelse(then-array, else-image) => image
-        #   etc.
-        #
-        # Select pixels from then if condition is #true and from else if
-        # condition is #false. Use the :blend option to fade smoothly 
-        # between then and else. 
+        # Select pixels from #th if #self is non-zero and from #el if
+        # #self is zero. Use the :blend option to fade smoothly 
+        # between #th and #el. 
         def ifthenelse(th, el, *args) 
             match_image = [th, el, self].find {|x| x.is_a? Vips::Image}
 
@@ -921,6 +908,20 @@ module Vips
             call_base "ifthenelse", self, "", [th, el] + args
         end
 
+    end
+
+    def self.generate_rdoc
+        # we have synonyms: don't generate twice
+        generated_operations = {}
+
+        def generate_class gtype
+            cls = GObject::type_class_ref gtype
+            (GObject::type_children gtype).each do |x|
+                generate_class x
+            end
+        end
+
+        generate_class TYPE_OPERATION
     end
 
 end

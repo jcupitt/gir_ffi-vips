@@ -12,3 +12,36 @@
 
   see note in set_value .. have opened issue on this
 
+
+
+	how do we turn a symbol into a number when setting an enum?
+
+	example ... this works:
+
+		op = Vips::Operation.new "cast"
+		> op.get_property("format").get_value
+		=> :ushort
+		> op.get_property("format").get_enum
+		=> 2
+		op.set_property "format", 1
+
+	this does not:
+
+		op = Vips::Operation.new "cast"
+		op.set_property "format", :ushort
+
+	try:
+
+> op.get_property("format").g_type
+=> 45122240
+> GObject.type_name 45122240
+=> "VipsBandFormat"
+> Vips::BandFormat.get_gtype
+=> 45122240
+> a = GObject.type_class_peek 45122240
+=> #<GObject::TypeClass:0x00000002b28c28 @struct=#<GObject::TypeClass::Struct:0x00000002b28c00>>
+
+	a is not the same as Vips::BandFormat :-( we can't use it to convert
+	:ushort to a number
+
+
