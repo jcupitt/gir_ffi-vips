@@ -44,4 +44,13 @@
 	a is not the same as Vips::BandFormat :-( we can't use it to convert
 	:ushort to a number
 
+  more fiddling
+
+  	> op = Vips::Operation.new "black"
+	> x = op.to_ptr
+	> GObject::type_from_instance_pointer x
+	=> 20724816
+	> GObject::type_name 20724816
+	=> "VipsBlack"
+
 
