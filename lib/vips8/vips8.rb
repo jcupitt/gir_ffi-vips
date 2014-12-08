@@ -134,13 +134,13 @@ class Argument # :nodoc:
     end
 
     def description
+        name = @name
+        blurb = @prop.get_blurb
         direction = @flags & Vips::ArgumentFlags[:input] != 0 ? 
             "input" : "output"
+        type = GObject::type_name(@prop.value_type)
 
-        result = @name
-        result += " " * (15 - @name.length) + " -- " + @prop.get_blurb
-        result += ", " + direction 
-        result += " " + GObject::type_name(@prop.value_type)
+        result = "[#{name}] #{blurb}, #{direction} #{type}"
     end
 
 end
@@ -908,28 +908,108 @@ module Vips
             call_base "ifthenelse", self, "", [th, el] + args
         end
 
+        #:include: vips8-rdoc.txt 
+
     end
 
+    # This method generates rdoc comments for all the dynamically bound
+    # vips operations. Run this method into a text file in this directory 
+    # called "vips8-rdoc.txt". This file is included in the Vips::Image
+    # documentation above. 
+
     def self.generate_rdoc
-        # we have synonyms: don't generate twice
-        generated_operations = {}
+        generate_operation = lambda do |op|
+            flags = op.get_flags
+            # need a bit pattern, not a symbolic name
+            flags = Vips::OperationFlags.to_native flags, 1
+            return if (flags & Vips::OperationFlags[:deprecated]) != 0
 
-        def generate_class gtype
-            cls = GObject::type_class_peek gtype
+            gtype = GObject::type_from_instance op
+            nickname = Vips::nickname_find gtype
 
-            if cls != nil
-                
+            all_args = op.get_args.select {|arg| not arg.isset}
+
+            # separate args into various categories
+ 
+            required_input = all_args.select do |arg|
+                (arg.flags & Vips::ArgumentFlags[:input]) != 0 and
+                (arg.flags & Vips::ArgumentFlags[:required]) != 0 
             end
 
-            # we need some way to get from the gtype to the matching ruby class
-            # that wraps it
- 
+            optional_input = all_args.select do |arg|
+                (arg.flags & Vips::ArgumentFlags[:input]) != 0 and
+                (arg.flags & Vips::ArgumentFlags[:required]) == 0 
+            end
+
+            required_output = all_args.select do |arg|
+                (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
+                (arg.flags & Vips::ArgumentFlags[:required]) != 0 
+            end
+
+            optional_output = all_args.select do |arg|
+                (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
+                (arg.flags & Vips::ArgumentFlags[:required]) == 0 
+            end
+
+            # find the first input image, if any ... we will be a method of this
+            # instance
+            member_x = required_input.find do |x|
+                GObject::type_is_a(x.prop.value_type, Vips::TYPE_IMAGE)
+            end
+            if member_x != nil
+                required_input.delete member_x
+            end
+
+            description = op.get_description
+
+            puts "##"
+            puts "# :singleton-method:" if not member_x
+            puts "# call-seq:"
+            prefix = member_x ? "" : "Vips::Image."
+            input = required_input.map(&:name).join(", ")
+            output = required_output.map(&:name).join(", ")
+            puts "#    #{prefix}#{nickname}(#{input}) => #{output}"
+            puts "#"
+            puts "# #{description.capitalize}."
+            if required_input.length > 0 
+                puts "#"
+                required_input.each {|arg| puts "#    #{arg.description}"}
+            end
+            if required_output.length > 0 
+                puts "#"
+                required_output.each {|arg| puts "#    #{arg.description}"}
+            end
+            if optional_input.length > 0 
+                puts "#"
+                puts "# Options:"
+                optional_input.each {|arg| puts "#    #{arg.description}"}
+            end
+            if optional_output.length > 0 
+                puts "#"
+                puts "# Output options:"
+                optional_output.each {|arg| puts "#    #{arg.description}"}
+            end
+            puts ""
+        end
+
+        generate_class = lambda do |gtype|
+            name = GObject::type_name gtype
+            # can be nil for abstract types
+            # can't find a way to get to #abstract? from a gtype
+            op = Vips::Operation.new name
+            Vips::error_clear
+
+            generate_operation.(op) if op != nil
+
             (GObject::type_children gtype).each do |x|
-                generate_class x
+                generate_class.(x)
             end
         end
 
-        generate_class TYPE_OPERATION
+        put "# This file generated automatically. Do not edit!"
+        put "# "
+
+        generate_class.(TYPE_OPERATION)
     end
 
 end
