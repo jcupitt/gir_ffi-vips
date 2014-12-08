@@ -41,3 +41,13 @@
 	:ushort to a number
 
   how do we convert 45122240 into the ruby class that wraps it?
+
+  how about 
+
+  	op = Vips::Operation.new "cast"
+	gtype = op.get_property("format").g_type
+	name = GObject.type_name gtype
+	=> "VipsBandFormat"
+
+  now drop the prefix and see if Vips:: has that as a member
+
