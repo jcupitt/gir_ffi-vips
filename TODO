@@ -44,13 +44,81 @@
 	a is not the same as Vips::BandFormat :-( we can't use it to convert
 	:ushort to a number
 
+  how do we convert 45122240 into the ruby class that wraps it?
+
   more fiddling
 
   	> op = Vips::Operation.new "black"
-	> x = op.to_ptr
-	> GObject::type_from_instance_pointer x
+	> GObject::type_from_instance op
 	=> 20724816
 	> GObject::type_name 20724816
 	=> "VipsBlack"
+	> a = GObject.type_class_peek 20724816
+	=> #<GObject::TypeClass:0x00000000de9bf8 @struct=#<GObject::TypeClass::Struct:0x00000000de9bd0>>
+	> a.methods
+	=> [:peek_parent, :unref, :g_type, :struct, :to_ptr, :setup_and_call,
+	:==, :nil?, :===, :=~, :!~, :eql?, :hash, :<=>, :class,
+	:singleton_class, :clone, :dup, :initialize_dup, :initialize_clone,
+	:taint, :tainted?, :untaint, :untrust, :untrusted?, :trust, :freeze,
+	:frozen?, :to_s, :inspect, :methods, :singleton_methods,
+	:protected_methods, :private_methods, :public_methods,
+	:instance_variables, :instance_variable_get, :instance_variable_set,
+	:instance_variable_defined?, :instance_of?, :kind_of?, :is_a?, :tap,
+	:send, :public_send, :respond_to?, :respond_to_missing?, :extend,
+	:display, :method, :public_method, :define_singleton_method,
+	:object_id, :to_enum, :enum_for, :equal?, :!, :!=, :instance_eval,
+	:instance_exec, :__send__, :__id__]
+
+  Vips::Black does not actually exist in ruby, it's not in the gir
+
+  pyvips8 does this at the gtype level ... 
+
+	> Vips::TYPE_OPERATION
+	=> 41281504
+	> GObject::type_children 41281504
+	=> #<GirFFI::SizedArray:0x000000025b8ef0 @element_type=:GType,
+	@size=32, @pointer=#<FFI::Pointer address=0x00000002c3dab0>>
+	> a = GObject.type_class_peek 41281504
+	=> #<GObject::TypeClass:0x00000002464950 @struct=#<GObject::TypeClass::Struct:0x00000002464928>>
+
+	> op = Vips::Operation.new "black"
+	=> #<Vips::Operation:0x00000002889b70
+	@struct=#<Vips::Operation::Struct:0x00000002889a80>>
+	> gtype = GObject::type_from_instance op
+	=> 48638672
+	> obj = GObject::Object.new gtype, nil
+	=> #<GObject::Object:0x00000002962330
+	@struct=#<GObject::Object::Struct:0x00000002962308>>
+	... looks very like op
+
+	> Vips::TYPE_OPERATION
+	=> 48536640
+	> GObject::Object.new 48536640, nil
+	GLib error
+
+  IObjectInfo has an abtract? method ... how can we get IObjectInfo from
+  TypeClass?
+
+	op = Vips::Operation.new "black"
+	gtype = GObject::type_from_instance op
+	obj = GObject::Object.new gtype, nil
+	x = GObjectIntrospection::IObjectInfo.new obj.to_ptr
+
+	a = GObject.type_class_peek Vips::TYPE_OPERATION
+	x = GObjectIntrospection::IObjectInfo.new a.to_ptr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -915,7 +915,11 @@ module Vips
         generated_operations = {}
 
         def generate_class gtype
-            cls = GObject::type_class_ref gtype
+            cls = GObject::type_class_peek gtype
+
+            if cls != nil
+                
+            end
 
             # we need some way to get from the gtype to the matching ruby class
             # that wraps it
@@ -929,4 +933,3 @@ module Vips
     end
 
 end
-
