@@ -788,9 +788,9 @@ module Vips
         end
 
         # :call-seq:
-        #   bandjoin(image) => image
-        #   bandjoin(const_array) => image
-        #   bandjoin(image_array) => image
+        #   bandjoin(image) => out
+        #   bandjoin(const_array) => out
+        #   bandjoin(image_array) => out
         #
         # Join a set of images bandwise.
         def bandjoin(other)
@@ -921,6 +921,7 @@ module Vips
         #
         # Run an external command.
         #
+        # Input:
         # [cmd-format] Command to run, input gchararray
         #
         # Options:
@@ -939,8 +940,10 @@ module Vips
         #
         # Add two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -950,8 +953,10 @@ module Vips
         #
         # Subtract two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -961,8 +966,10 @@ module Vips
         #
         # Multiply two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -972,8 +979,10 @@ module Vips
         #
         # Divide two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -983,9 +992,11 @@ module Vips
         #
         # Relational operation on two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         # [relational] relational to perform, input VipsOperationRelational
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -995,8 +1006,10 @@ module Vips
         #
         # Remainder after integer division of two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1006,9 +1019,11 @@ module Vips
         #
         # Boolean operation on two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         # [boolean] boolean to perform, input VipsOperationBoolean
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1018,9 +1033,11 @@ module Vips
         #
         # Binary math operations.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         # [math2] math to perform, input VipsOperationMath2
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1030,9 +1047,11 @@ module Vips
         #
         # Complex binary operations on two images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         # [cmplx] binary complex operation to perform, input VipsOperationComplex2
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1042,8 +1061,10 @@ module Vips
         #
         # Form a complex image from two real images.
         #
+        # Input:
         # [right] Right-hand image argument, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1053,8 +1074,10 @@ module Vips
         #
         # Sum an array of images.
         #
+        # Input:
         # [in] Array of input images, input VipsArrayImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1064,6 +1087,7 @@ module Vips
         #
         # Invert an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1073,9 +1097,11 @@ module Vips
         #
         # Calculate (a * in + b).
         #
+        # Input:
         # [a] Multiply by this, input VipsArrayDouble
         # [b] Add this, input VipsArrayDouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1088,8 +1114,10 @@ module Vips
         #
         # Apply a math operation to an image.
         #
+        # Input:
         # [math] math to perform, input VipsOperationMath
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1099,6 +1127,7 @@ module Vips
         #
         # Absolute value of an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1108,6 +1137,7 @@ module Vips
         #
         # Unit vector of pixel.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1117,8 +1147,10 @@ module Vips
         #
         # Perform a round function on an image.
         #
+        # Input:
         # [round] rounding operation to perform, input VipsOperationRound
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1128,9 +1160,11 @@ module Vips
         #
         # Relational operations against a constant.
         #
+        # Input:
         # [c] Array of constants, input VipsArrayDouble
         # [relational] relational to perform, input VipsOperationRelational
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1140,8 +1174,10 @@ module Vips
         #
         # Remainder after integer division of an image and a constant.
         #
+        # Input:
         # [c] Array of constants, input VipsArrayDouble
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1151,9 +1187,11 @@ module Vips
         #
         # Boolean operations against a constant.
         #
+        # Input:
         # [c] Array of constants, input VipsArrayDouble
         # [boolean] boolean to perform, input VipsOperationBoolean
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1163,9 +1201,11 @@ module Vips
         #
         # Pow( @in, @c ).
         #
+        # Input:
         # [c] Array of constants, input VipsArrayDouble
         # [math2] math to perform, input VipsOperationMath2
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1175,8 +1215,10 @@ module Vips
         #
         # Perform a complex operation on an image.
         #
+        # Input:
         # [cmplx] complex to perform, input VipsOperationComplex
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1186,8 +1228,10 @@ module Vips
         #
         # Get a component from a complex image.
         #
+        # Input:
         # [get] complex to perform, input VipsOperationComplexget
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1197,6 +1241,7 @@ module Vips
         #
         # Find image average.
         #
+        # Output:
         # [out] Output value, output gdouble
 
         ##
@@ -1206,6 +1251,7 @@ module Vips
         #
         # Find image minimum.
         #
+        # Output:
         # [out] Output value, output gdouble
         #
         # Options:
@@ -1225,6 +1271,7 @@ module Vips
         #
         # Find image maximum.
         #
+        # Output:
         # [out] Output value, output gdouble
         #
         # Options:
@@ -1244,6 +1291,7 @@ module Vips
         #
         # Find image standard deviation.
         #
+        # Output:
         # [out] Output value, output gdouble
 
         ##
@@ -1253,6 +1301,7 @@ module Vips
         #
         # Find image average.
         #
+        # Output:
         # [out] Output array of statistics, output VipsImage
 
         ##
@@ -1262,6 +1311,7 @@ module Vips
         #
         # Find image histogram.
         #
+        # Output:
         # [out] Output histogram, output VipsImage
         #
         # Options:
@@ -1274,6 +1324,7 @@ module Vips
         #
         # Find n-dimensional image histogram.
         #
+        # Output:
         # [out] Output histogram, output VipsImage
         #
         # Options:
@@ -1286,8 +1337,10 @@ module Vips
         #
         # Find indexed image histogram.
         #
+        # Input:
         # [index] Index image, input VipsImage
         #
+        # Output:
         # [out] Output histogram, output VipsImage
 
         ##
@@ -1297,6 +1350,7 @@ module Vips
         #
         # Find hough line transform.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1310,6 +1364,7 @@ module Vips
         #
         # Find hough circle transform.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1324,6 +1379,7 @@ module Vips
         #
         # Find image projections.
         #
+        # Output:
         # [columns] Sums of columns, output VipsImage
         # [rows] Sums of rows, output VipsImage
 
@@ -1334,6 +1390,7 @@ module Vips
         #
         # Find image profiles.
         #
+        # Output:
         # [columns] First non-zero pixel in column, output VipsImage
         # [rows] First non-zero pixel in row, output VipsImage
 
@@ -1344,9 +1401,11 @@ module Vips
         #
         # Measure a set of patches on a color chart.
         #
+        # Input:
         # [h] Number of patches across chart, input gint
         # [v] Number of patches down chart, input gint
         #
+        # Output:
         # [out] Output array of statistics, output VipsImage
         #
         # Options:
@@ -1362,9 +1421,11 @@ module Vips
         #
         # Read a point from an image.
         #
+        # Input:
         # [x] Point to read, input gint
         # [y] Point to read, input gint
         #
+        # Output:
         # [out-array] Array of output values, output VipsArrayDouble
 
         ##
@@ -1374,6 +1435,7 @@ module Vips
         #
         # Copy an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1396,6 +1458,7 @@ module Vips
         #
         # Cache an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1411,6 +1474,7 @@ module Vips
         #
         # Cache an image as a set of tiles.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1428,6 +1492,7 @@ module Vips
         #
         # Cache an image as a set of lines.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1443,6 +1508,7 @@ module Vips
         #
         # Check sequential access.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1457,6 +1523,7 @@ module Vips
         #
         # Cache an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1471,11 +1538,13 @@ module Vips
         #
         # Embed an image in a larger image.
         #
+        # Input:
         # [x] Left edge of input in output, input gint
         # [y] Top edge of input in output, input gint
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1489,8 +1558,10 @@ module Vips
         #
         # Flip an image.
         #
+        # Input:
         # [direction] Direction to flip image, input VipsDirection
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1500,10 +1571,12 @@ module Vips
         #
         # Insert image @sub into @main at @x, @y.
         #
+        # Input:
         # [sub] Sub-image to insert into main image, input VipsImage
         # [x] Left edge of sub in main, input gint
         # [y] Top edge of sub in main, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1517,9 +1590,11 @@ module Vips
         #
         # Join a pair of images.
         #
+        # Input:
         # [in2] Second input image, input VipsImage
         # [direction] Join left-right or up-down, input VipsDirection
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1535,11 +1610,13 @@ module Vips
         #
         # Extract an area from an image.
         #
+        # Input:
         # [left] Left edge of extract area, input gint
         # [top] Top edge of extract area, input gint
         # [width] Width of extract area, input gint
         # [height] Height of extract area, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1549,11 +1626,13 @@ module Vips
         #
         # Extract an area from an image.
         #
+        # Input:
         # [left] Left edge of extract area, input gint
         # [top] Top edge of extract area, input gint
         # [width] Width of extract area, input gint
         # [height] Height of extract area, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1563,23 +1642,14 @@ module Vips
         #
         # Extract band from an image.
         #
+        # Input:
         # [band] Band to extract, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
         # [n] Number of bands to extract, input gint
-
-        ##
-        # :singleton-method: bandjoin
-        # :call-seq:
-        #    bandjoin(in) => out
-        #
-        # Bandwise join a set of images.
-        #
-        # [in] Array of input images, input VipsArrayImage
-        #
-        # [out] Output image, output VipsImage
 
         ##
         # :singleton-method: bandrank
@@ -1588,8 +1658,10 @@ module Vips
         #
         # Band-wise rank of a set of images.
         #
+        # Input:
         # [in] Array of input images, input VipsArrayImage
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1602,6 +1674,7 @@ module Vips
         #
         # Band-wise average.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1611,8 +1684,10 @@ module Vips
         #
         # Boolean operation across image bands.
         #
+        # Input:
         # [boolean] boolean to perform, input VipsOperationBoolean
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1622,9 +1697,11 @@ module Vips
         #
         # Replicate an image.
         #
+        # Input:
         # [across] Repeat this many times horizontally, input gint
         # [down] Repeat this many times vertically, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1634,8 +1711,10 @@ module Vips
         #
         # Cast an image.
         #
+        # Input:
         # [format] Format to cast to, input VipsBandFormat
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1645,8 +1724,10 @@ module Vips
         #
         # Rotate an image.
         #
+        # Input:
         # [angle] Angle to rotate image, input VipsAngle
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1656,6 +1737,7 @@ module Vips
         #
         # Rotate an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1668,25 +1750,11 @@ module Vips
         #
         # Autorotate image by exif tag.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Output options:
         # [angle] Angle image was rotated by, output VipsAngle
-
-        ##
-        # :method: ifthenelse
-        # :call-seq:
-        #    ifthenelse(in1, in2) => out
-        #
-        # Ifthenelse an image.
-        #
-        # [in1] Source for TRUE pixels, input VipsImage
-        # [in2] Source for FALSE pixels, input VipsImage
-        #
-        # [out] Output image, output VipsImage
-        #
-        # Options:
-        # [blend] Blend smoothly between then and else parts, input gboolean
 
         ##
         # :method: recomb
@@ -1695,8 +1763,10 @@ module Vips
         #
         # Linear recombination with matrix.
         #
+        # Input:
         # [m] matrix of coefficients, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1706,6 +1776,7 @@ module Vips
         #
         # Flatten alpha out of an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1718,10 +1789,12 @@ module Vips
         #
         # Grid an image.
         #
+        # Input:
         # [tile-height] chop into tiles this high, input gint
         # [across] number of tiles across, input gint
         # [down] number of tiles down, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1731,6 +1804,7 @@ module Vips
         #
         # Scale an image to uchar.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1744,6 +1818,7 @@ module Vips
         #
         # Wrap image origin.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1757,9 +1832,11 @@ module Vips
         #
         # Zoom an image.
         #
+        # Input:
         # [xfac] Horizontal zoom factor, input gint
         # [yfac] Vertical zoom factor, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1769,9 +1846,11 @@ module Vips
         #
         # Subsample an image.
         #
+        # Input:
         # [xfac] Horizontal subsample factor, input gint
         # [yfac] Vertical subsample factor, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1784,6 +1863,7 @@ module Vips
         #
         # Pick most-significant byte from an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1796,6 +1876,7 @@ module Vips
         #
         # False colour an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -1805,6 +1886,7 @@ module Vips
         #
         # Gamma an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1817,9 +1899,11 @@ module Vips
         #
         # Make a black image.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1832,9 +1916,11 @@ module Vips
         #
         # Make a gaussnoise image.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1848,8 +1934,10 @@ module Vips
         #
         # Make a text image.
         #
+        # Input:
         # [text] Text to render, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1865,9 +1953,11 @@ module Vips
         #
         # Make an image where pixel values are coordinates.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1882,9 +1972,11 @@ module Vips
         #
         # Make a gaussian image.
         #
+        # Input:
         # [sigma] Sigma of Gaussian, input gdouble
         # [min-ampl] Minimum amplitude of Gaussian, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1898,9 +1990,11 @@ module Vips
         #
         # Make a laplacian of gaussian image.
         #
+        # Input:
         # [sigma] Radius of Logmatian, input gdouble
         # [min-ampl] Minimum amplitude of Logmatian, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1914,9 +2008,11 @@ module Vips
         #
         # Make an image showing the eye's spatial response.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1930,9 +2026,11 @@ module Vips
         #
         # Make a grey ramp image.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1945,9 +2043,11 @@ module Vips
         #
         # Make a zone plate.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1960,9 +2060,11 @@ module Vips
         #
         # Make a 2d sine wave.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1977,10 +2079,12 @@ module Vips
         #
         # Make an ideal filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [frequency-cutoff] Frequency cutoff, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -1996,11 +2100,13 @@ module Vips
         #
         # Make an ideal ring filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [frequency-cutoff] Frequency cutoff, input gdouble
         # [ringwidth] Ringwidth, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2016,12 +2122,14 @@ module Vips
         #
         # Make an ideal band filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [frequency-cutoff-x] Frequency cutoff x, input gdouble
         # [frequency-cutoff-y] Frequency cutoff y, input gdouble
         # [radius] radius of circle, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2037,12 +2145,14 @@ module Vips
         #
         # Make a butterworth filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [order] Filter order, input gdouble
         # [frequency-cutoff] Frequency cutoff, input gdouble
         # [amplitude-cutoff] Amplitude cutoff, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2058,6 +2168,7 @@ module Vips
         #
         # Make a butterworth ring filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [order] Filter order, input gdouble
@@ -2065,6 +2176,7 @@ module Vips
         # [amplitude-cutoff] Amplitude cutoff, input gdouble
         # [ringwidth] Ringwidth, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2080,6 +2192,7 @@ module Vips
         #
         # Make a butterworth_band filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [order] Filter order, input gdouble
@@ -2088,6 +2201,7 @@ module Vips
         # [radius] radius of circle, input gdouble
         # [amplitude-cutoff] Amplitude cutoff, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2103,11 +2217,13 @@ module Vips
         #
         # Make a gaussian filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [frequency-cutoff] Frequency cutoff, input gdouble
         # [amplitude-cutoff] Amplitude cutoff, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2123,12 +2239,14 @@ module Vips
         #
         # Make a gaussian ring filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [frequency-cutoff] Frequency cutoff, input gdouble
         # [amplitude-cutoff] Amplitude cutoff, input gdouble
         # [ringwidth] Ringwidth, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2144,6 +2262,7 @@ module Vips
         #
         # Make a gaussian filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [frequency-cutoff-x] Frequency cutoff x, input gdouble
@@ -2151,6 +2270,7 @@ module Vips
         # [radius] radius of circle, input gdouble
         # [amplitude-cutoff] Amplitude cutoff, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2166,10 +2286,12 @@ module Vips
         #
         # Make fractal filter.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [fractal-dimension] Fractal dimension, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2185,6 +2307,7 @@ module Vips
         #
         # Build a look-up table.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -2194,6 +2317,7 @@ module Vips
         #
         # Build an inverted look-up table.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2206,6 +2330,7 @@ module Vips
         #
         # Build a look-up table.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2227,6 +2352,7 @@ module Vips
         #
         # Make a 1d image where pixel values are indexes.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2241,10 +2367,12 @@ module Vips
         #
         # Make a fractal surface.
         #
+        # Input:
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [fractal-dimension] Fractal dimension, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -2254,8 +2382,10 @@ module Vips
         #
         # Load a radiance image from a file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2272,8 +2402,10 @@ module Vips
         #
         # Load ppm from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2290,8 +2422,10 @@ module Vips
         #
         # Load csv from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2312,8 +2446,10 @@ module Vips
         #
         # Load matrix from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2330,8 +2466,10 @@ module Vips
         #
         # Load an analyze6 image.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2348,11 +2486,13 @@ module Vips
         #
         # Load raw data from a file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         # [width] Image width in pixels, input gint
         # [height] Image height in pixels, input gint
         # [bands] Number of bands in image, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2370,8 +2510,10 @@ module Vips
         #
         # Load vips from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2388,8 +2530,10 @@ module Vips
         #
         # Load png from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2406,8 +2550,10 @@ module Vips
         #
         # Load png from buffer.
         #
+        # Input:
         # [buffer] Buffer to load from, input VipsBlob
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2424,8 +2570,10 @@ module Vips
         #
         # Load mat from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2442,8 +2590,10 @@ module Vips
         #
         # Load jpeg from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2463,8 +2613,10 @@ module Vips
         #
         # Load jpeg from buffer.
         #
+        # Input:
         # [buffer] Buffer to load from, input VipsBlob
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2484,8 +2636,10 @@ module Vips
         #
         # Load webp from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2502,8 +2656,10 @@ module Vips
         #
         # Load webp from buffer.
         #
+        # Input:
         # [buffer] Buffer to load from, input VipsBlob
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2520,8 +2676,10 @@ module Vips
         #
         # Load tiff from file.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2539,8 +2697,10 @@ module Vips
         #
         # Load tiff from buffer.
         #
+        # Input:
         # [buffer] Buffer to load from, input VipsBlob
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2558,8 +2718,10 @@ module Vips
         #
         # Load file with openslide.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2579,8 +2741,10 @@ module Vips
         #
         # Load file with imagemagick.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2599,8 +2763,10 @@ module Vips
         #
         # Load a fits image.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2617,8 +2783,10 @@ module Vips
         #
         # Load an openexr image.
         #
+        # Input:
         # [filename] Filename to load from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2635,6 +2803,7 @@ module Vips
         #
         # Save image to radiance file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2648,6 +2817,7 @@ module Vips
         #
         # Save image to ppm file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2663,6 +2833,7 @@ module Vips
         #
         # Save image to csv file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2677,6 +2848,7 @@ module Vips
         #
         # Save image to matrix file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2701,6 +2873,7 @@ module Vips
         #
         # Save image to raw file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2714,6 +2887,7 @@ module Vips
         #
         # Write raw image to file descriptor.
         #
+        # Input:
         # [fd] File descriptor to write to, input gint
         #
         # Options:
@@ -2727,6 +2901,7 @@ module Vips
         #
         # Save image to vips file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2740,6 +2915,7 @@ module Vips
         #
         # Save image to deep zoom format.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2762,6 +2938,7 @@ module Vips
         #
         # Save image to png file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2779,6 +2956,7 @@ module Vips
         #
         # Save image to png buffer.
         #
+        # Output:
         # [buffer] Buffer to save to, output VipsBlob
         #
         # Options:
@@ -2796,6 +2974,7 @@ module Vips
         #
         # Save image to jpeg file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2814,6 +2993,7 @@ module Vips
         #
         # Save image to jpeg buffer.
         #
+        # Output:
         # [buffer] Buffer to save to, output VipsBlob
         #
         # Options:
@@ -2848,6 +3028,7 @@ module Vips
         #
         # Save image to webp file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2863,6 +3044,7 @@ module Vips
         #
         # Save image to webp buffer.
         #
+        # Output:
         # [buffer] Buffer to save to, output VipsBlob
         #
         # Options:
@@ -2878,6 +3060,7 @@ module Vips
         #
         # Save image to tiff file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2904,6 +3087,7 @@ module Vips
         #
         # Save image to fits file.
         #
+        # Input:
         # [filename] Filename to save to, input gchararray
         #
         # Options:
@@ -2917,9 +3101,11 @@ module Vips
         #
         # Shrink an image.
         #
+        # Input:
         # [xshrink] Horizontal shrink factor, input gdouble
         # [yshrink] Vertical shrink factor, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -2929,8 +3115,10 @@ module Vips
         #
         # Resample an image with a quadratic transform.
         #
+        # Input:
         # [coeff] Coefficient matrix, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2943,8 +3131,10 @@ module Vips
         #
         # Affine transform of an image.
         #
+        # Input:
         # [matrix] Transformation matrix, input VipsArrayDouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2962,6 +3152,7 @@ module Vips
         #
         # Similarity transform of an image.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2980,8 +3171,10 @@ module Vips
         #
         # Resize an image.
         #
+        # Input:
         # [scale] Scale image by this factor, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -2996,8 +3189,10 @@ module Vips
         #
         # Convert to a new colourspace.
         #
+        # Input:
         # [space] Destination colour space, input VipsInterpretation
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3010,8 +3205,10 @@ module Vips
         #
         # Convert to a new colourspace.
         #
+        # Input:
         # [space] Destination colour space, input VipsInterpretation
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3024,6 +3221,7 @@ module Vips
         #
         # Transform cielab to xyz.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3036,6 +3234,7 @@ module Vips
         #
         # Transform xyz to lab.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3048,6 +3247,7 @@ module Vips
         #
         # Transform lab to lch.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3057,6 +3257,7 @@ module Vips
         #
         # Transform lch to lab.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3066,6 +3267,7 @@ module Vips
         #
         # Transform lch to cmc.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3075,6 +3277,7 @@ module Vips
         #
         # Transform lch to cmc.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3084,6 +3287,7 @@ module Vips
         #
         # Transform xyz to yxy.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3093,6 +3297,7 @@ module Vips
         #
         # Transform yxy to xyz.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3102,6 +3307,7 @@ module Vips
         #
         # Transform scrgb to xyz.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3111,6 +3317,7 @@ module Vips
         #
         # Transform xyz to scrgb.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3120,6 +3327,7 @@ module Vips
         #
         # Unpack a labq image to float lab.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3129,6 +3337,7 @@ module Vips
         #
         # Transform float lab to labq coding.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3138,6 +3347,7 @@ module Vips
         #
         # Unpack a labq image to short lab.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3147,6 +3357,7 @@ module Vips
         #
         # Transform short lab to labq coding.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3156,6 +3367,7 @@ module Vips
         #
         # Transform signed short lab to float.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3165,6 +3377,7 @@ module Vips
         #
         # Transform float lab to signed short.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3174,6 +3387,7 @@ module Vips
         #
         # Unpack radiance coding to float rgb.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3183,6 +3397,7 @@ module Vips
         #
         # Transform float rgb to radiance coding.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3192,6 +3407,7 @@ module Vips
         #
         # Unpack a labq image to short lab.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3201,6 +3417,7 @@ module Vips
         #
         # Convert an srgb image to scrgb.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3210,6 +3427,7 @@ module Vips
         #
         # Convert an scrgb image to srgb.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3222,6 +3440,7 @@ module Vips
         #
         # Import from device with icc profile.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3237,6 +3456,7 @@ module Vips
         #
         # Output to device with icc profile.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3252,8 +3472,10 @@ module Vips
         #
         # Transform between devices with icc profiles.
         #
+        # Input:
         # [output-profile] Filename to load output profile from, input gchararray
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3270,8 +3492,10 @@ module Vips
         #
         # Calculate de76.
         #
+        # Input:
         # [right] Right-hand input image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3281,8 +3505,10 @@ module Vips
         #
         # Calculate de00.
         #
+        # Input:
         # [right] Right-hand input image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3292,8 +3518,10 @@ module Vips
         #
         # Calculate decmc.
         #
+        # Input:
         # [right] Right-hand input image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3303,8 +3531,10 @@ module Vips
         #
         # Map an image though a lut.
         #
+        # Input:
         # [lut] Look-up table image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3317,8 +3547,10 @@ module Vips
         #
         # Find threshold for percent of pixels.
         #
+        # Input:
         # [percent] Percent of pixels, input gdouble
         #
+        # Output:
         # [threshold] Threshold above which lie percent of pixels, output gint
 
         ##
@@ -3328,9 +3560,11 @@ module Vips
         #
         # Statistical difference.
         #
+        # Input:
         # [width] Window width in pixels, input gint
         # [height] Window height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3346,6 +3580,7 @@ module Vips
         #
         # Form cumulative histogram.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3355,8 +3590,10 @@ module Vips
         #
         # Match two histograms.
         #
+        # Input:
         # [ref] Reference histogram, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3366,6 +3603,7 @@ module Vips
         #
         # Normalise histogram.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3375,6 +3613,7 @@ module Vips
         #
         # Histogram equalisation.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3387,6 +3626,7 @@ module Vips
         #
         # Plot histogram.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3396,9 +3636,11 @@ module Vips
         #
         # Local histogram equalisation.
         #
+        # Input:
         # [width] Window width in pixels, input gint
         # [height] Window height in pixels, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3408,6 +3650,7 @@ module Vips
         #
         # Test for monotonicity.
         #
+        # Output:
         # [monotonic] true if in is monotonic, output gboolean
 
         ##
@@ -3417,8 +3660,10 @@ module Vips
         #
         # Convolution operation.
         #
+        # Input:
         # [mask] Input matrix image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3433,8 +3678,10 @@ module Vips
         #
         # Convolve with rotating mask.
         #
+        # Input:
         # [mask] Input matrix image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3452,8 +3699,10 @@ module Vips
         #
         # Seperable convolution operation.
         #
+        # Input:
         # [mask] Input matrix image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3468,8 +3717,10 @@ module Vips
         #
         # Fast correlation.
         #
+        # Input:
         # [ref] Input reference image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3479,8 +3730,10 @@ module Vips
         #
         # Spatial correlation.
         #
+        # Input:
         # [ref] Input reference image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3490,6 +3743,7 @@ module Vips
         #
         # Unsharp masking for print.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3507,8 +3761,10 @@ module Vips
         #
         # Gaussian blur.
         #
+        # Input:
         # [sigma] Sigma of Gaussian, input gdouble
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3522,6 +3778,7 @@ module Vips
         #
         # Forward fft.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3531,6 +3788,7 @@ module Vips
         #
         # Inverse fft.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3543,8 +3801,10 @@ module Vips
         #
         # Frequency-domain filtering.
         #
+        # Input:
         # [mask] Input mask image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3554,6 +3814,7 @@ module Vips
         #
         # Make displayable power spectrum.
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3563,8 +3824,10 @@ module Vips
         #
         # Calculate phase correlation.
         #
+        # Input:
         # [in2] Second input image, input VipsImage
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3574,9 +3837,11 @@ module Vips
         #
         # Morphology operation.
         #
+        # Input:
         # [mask] Input matrix image, input VipsImage
         # [morph] Morphological operation to perform, input VipsOperationMorphology
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3586,10 +3851,12 @@ module Vips
         #
         # Rank filter.
         #
+        # Input:
         # [width] Window width in pixels, input gint
         # [height] Window height in pixels, input gint
         # [index] Select pixel at index, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
 
         ##
@@ -3599,8 +3866,10 @@ module Vips
         #
         # Count lines in an image.
         #
+        # Input:
         # [direction] Countlines left-right or up-down, input VipsDirection
         #
+        # Output:
         # [nolines] Number of lines, output gdouble
 
         ##
@@ -3610,6 +3879,7 @@ module Vips
         #
         # Label regions in an image.
         #
+        # Output:
         # [mask] Mask of region labels, output VipsImage
         #
         # Output options:
@@ -3618,15 +3888,19 @@ module Vips
         ##
         # :method: draw_rect
         # :call-seq:
-        #    draw_rect(ink, left, top, width, height) => 
+        #    draw_rect(ink, left, top, width, height) => image
         #
         # Paint a rectangle on an image.
         #
+        # Input:
         # [ink] Colour for pixels, input VipsArrayDouble
         # [left] Rect to fill, input gint
         # [top] Rect to fill, input gint
         # [width] Rect to fill, input gint
         # [height] Rect to fill, input gint
+        #
+        # Output:
+        # [image] Image to draw on, input VipsImage
         #
         # Options:
         # [fill] Draw a solid object, input gboolean
@@ -3634,39 +3908,51 @@ module Vips
         ##
         # :method: draw_mask
         # :call-seq:
-        #    draw_mask(ink, mask, x, y) => 
+        #    draw_mask(ink, mask, x, y) => image
         #
         # Draw a mask on an image.
         #
+        # Input:
         # [ink] Colour for pixels, input VipsArrayDouble
         # [mask] Mask of pixels to draw, input VipsImage
         # [x] Draw mask here, input gint
         # [y] Draw mask here, input gint
+        #
+        # Output:
+        # [image] Image to draw on, input VipsImage
 
         ##
         # :method: draw_line
         # :call-seq:
-        #    draw_line(ink, x1, y1, x2, y2) => 
+        #    draw_line(ink, x1, y1, x2, y2) => image
         #
         # Draw a draw_line on an image.
         #
+        # Input:
         # [ink] Colour for pixels, input VipsArrayDouble
         # [x1] Start of draw_line, input gint
         # [y1] Start of draw_line, input gint
         # [x2] End of draw_line, input gint
         # [y2] End of draw_line, input gint
+        #
+        # Output:
+        # [image] Image to draw on, input VipsImage
 
         ##
         # :method: draw_circle
         # :call-seq:
-        #    draw_circle(ink, cx, cy, radius) => 
+        #    draw_circle(ink, cx, cy, radius) => image
         #
         # Draw a draw_circle on an image.
         #
+        # Input:
         # [ink] Colour for pixels, input VipsArrayDouble
         # [cx] Centre of draw_circle, input gint
         # [cy] Centre of draw_circle, input gint
         # [radius] Radius in pixels, input gint
+        #
+        # Output:
+        # [image] Image to draw on, input VipsImage
         #
         # Options:
         # [fill] Draw a solid object, input gboolean
@@ -3674,13 +3960,17 @@ module Vips
         ##
         # :method: draw_flood
         # :call-seq:
-        #    draw_flood(ink, x, y) => 
+        #    draw_flood(ink, x, y) => image
         #
         # Flood-fill an area.
         #
+        # Input:
         # [ink] Colour for pixels, input VipsArrayDouble
         # [x] DrawFlood start point, input gint
         # [y] DrawFlood start point, input gint
+        #
+        # Output:
+        # [image] Image to draw on, input VipsImage
         #
         # Options:
         # [test] Test pixels in this image, input VipsImage
@@ -3695,13 +3985,17 @@ module Vips
         ##
         # :method: draw_image
         # :call-seq:
-        #    draw_image(sub, x, y) => 
+        #    draw_image(sub, x, y) => image
         #
         # Paint an image into another image.
         #
+        # Input:
         # [sub] Sub-image to insert into main image, input VipsImage
         # [x] Draw image here, input gint
         # [y] Draw image here, input gint
+        #
+        # Output:
+        # [image] Image to draw on, input VipsImage
         #
         # Options:
         # [mode] Combining mode, input VipsCombineMode
@@ -3709,14 +4003,18 @@ module Vips
         ##
         # :method: draw_smudge
         # :call-seq:
-        #    draw_smudge(left, top, width, height) => 
+        #    draw_smudge(left, top, width, height) => image
         #
         # Blur a rectangle on an image.
         #
+        # Input:
         # [left] Rect to fill, input gint
         # [top] Rect to fill, input gint
         # [width] Rect to fill, input gint
         # [height] Rect to fill, input gint
+        #
+        # Output:
+        # [image] Image to draw on, input VipsImage
 
         ##
         # :method: merge
@@ -3725,11 +4023,13 @@ module Vips
         #
         # Merge two images.
         #
+        # Input:
         # [sec] Secondary image, input VipsImage
         # [direction] Horizontal or vertcial merge, input VipsDirection
         # [dx] Horizontal displacement from sec to ref, input gint
         # [dy] Vertical displacement from sec to ref, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3742,6 +4042,7 @@ module Vips
         #
         # Mosaic two images.
         #
+        # Input:
         # [sec] Secondary image, input VipsImage
         # [direction] Horizontal or vertcial mosaic, input VipsDirection
         # [xref] Position of reference tie-point, input gint
@@ -3749,6 +4050,7 @@ module Vips
         # [xsec] Position of secondary tie-point, input gint
         # [ysec] Position of secondary tie-point, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3772,6 +4074,7 @@ module Vips
         #
         # First-order mosaic of two images.
         #
+        # Input:
         # [sec] Secondary image, input VipsImage
         # [direction] Horizontal or vertcial mosaic, input VipsDirection
         # [xr1] Position of first reference tie-point, input gint
@@ -3783,6 +4086,7 @@ module Vips
         # [xs2] Position of second secondary tie-point, input gint
         # [ys2] Position of second secondary tie-point, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3800,6 +4104,7 @@ module Vips
         #
         # First-order match of two images.
         #
+        # Input:
         # [sec] Secondary image, input VipsImage
         # [xr1] Position of first reference tie-point, input gint
         # [yr1] Position of first reference tie-point, input gint
@@ -3810,6 +4115,7 @@ module Vips
         # [xs2] Position of second secondary tie-point, input gint
         # [ys2] Position of second secondary tie-point, input gint
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
@@ -3825,12 +4131,12 @@ module Vips
         #
         # Global balance an image mosaic.
         #
+        # Output:
         # [out] Output image, output VipsImage
         #
         # Options:
         # [gamma] Image gamma, input gdouble
         # [int-output] Integer output, input gboolean
-
 
     end
 
@@ -3838,6 +4144,8 @@ module Vips
     # vips operations. Run this method and paste into the source. 
 
     def self.generate_rdoc
+        no_generate = ["bandjoin", "ifthenelse"]
+
         generate_operation = lambda do |op|
             flags = op.get_flags
             # need a bit pattern, not a symbolic name
@@ -3846,6 +4154,8 @@ module Vips
 
             gtype = GObject::type_from_instance op
             nickname = Vips::nickname_find gtype
+
+            return if no_generate.include? nickname
 
             all_args = op.get_args.select {|arg| not arg.isset}
 
@@ -3866,10 +4176,24 @@ module Vips
                 (arg.flags & Vips::ArgumentFlags[:required]) != 0 
             end
 
+            # required input args with :modify are copied and appended to 
+            # output
+            modified_required_input = required_input.select do |arg|
+                (arg.flags & Vips::ArgumentFlags[:modify]) != 0 
+            end
+            required_output += modified_required_input
+
             optional_output = all_args.select do |arg|
                 (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
                 (arg.flags & Vips::ArgumentFlags[:required]) == 0 
             end
+
+            # optional input args with :modify are copied and appended to 
+            # output
+            modified_optional_input = optional_input.select do |arg|
+                (arg.flags & Vips::ArgumentFlags[:modify]) != 0 
+            end
+            optional_output += modified_optional_input
 
             # find the first input image, if any ... we will be a method of this
             # instance
@@ -3896,10 +4220,12 @@ module Vips
             puts "# #{description.capitalize}."
             if required_input.length > 0 
                 puts "#"
+                puts "# Input:"
                 required_input.each {|arg| puts "# #{arg.description}"}
             end
             if required_output.length > 0 
                 puts "#"
+                puts "# Output:"
                 required_output.each {|arg| puts "# #{arg.description}"}
             end
             if optional_input.length > 0 
