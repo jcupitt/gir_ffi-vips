@@ -5,7 +5,8 @@
 # License::   MIT
 
 # about as crude as you could get
-$debug = true
+#$debug = true
+$debug = false
 
 def log str # :nodoc:
     if $debug
@@ -87,9 +88,15 @@ class Argument # :nodoc:
         # enums must be unwrapped, not sure why, they are wrapped 
         # automatically
         if prop.is_a? GObject::ParamSpecEnum
-            enum_class = GObject::type_class_ref prop.value_type
-            # not sure what to do here
-            value = prop.to_native value, 1
+            name = GObject.type_name prop.value_type
+            if name =~ /Vips(.*)/
+                name = $~[1]
+            end
+            sym = name.to_sym
+            if not Vips.constants.include? sym
+                raise Vips::Error, "Enum #{sym} is not defined."
+            end
+            value = (Vips.const_get sym).to_native value, 1
         end
 
         # blob-ize
