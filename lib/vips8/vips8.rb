@@ -8,12 +8,15 @@
 $debug = true
 #$debug = false
 
-Vips::leak_set(true) if $debug
-
 def log str # :nodoc:
     if $debug
         puts str
     end
+end
+
+if $debug
+    log "Vips::leak_set(true)"
+    Vips::leak_set(true) 
 end
 
 # This class is used internally to convert Ruby values to arguments to libvips
@@ -82,8 +85,6 @@ class Argument # :nodoc:
     public
 
     def set_value(match_image, value)
-        # insert some boxing code
-
         # array-ize
         value = Argument::arrayize prop.value_type, value
 
@@ -628,6 +629,69 @@ module Vips
             end
 
             Vips::call_base saver, self, option_string, args
+        end
+
+        # Set a metadata item on an image. Ruby types are automatically
+        # transformed into the matching GValue, if possible. 
+        #
+        # For example, you can use this to set an image's ICC profile:
+        #
+        #   x = y.set_value "icc-profile-data", profile
+        #
+        # where @profile is an ICC profile held as a binary string object.
+        #
+        # If you need more control over the conversion process, use #set to 
+        # set a GValue directly.
+        def set_value(name, value)
+            gtype = get_typeof name
+            if gtype != 0
+                # array-ize
+                value = Argument::arrayize prop.value_type, value
+
+                # blob-ize
+                if GObject::type_is_a(gtype, Vips::TYPE_BLOB)
+                    if not value.is_a? Vips::Blob
+                        value = Vips::Blob.new(nil, value)
+                    end
+                end
+
+                # image-ize
+                if GObject::type_is_a(gtype, Vips::TYPE_IMAGE)
+                    if not value.is_a? Vips::Image
+                        value = Argument::imageize self, value
+                    end
+                end
+            end
+
+            set name, value
+        end
+
+        # Get a metadata item from an image. Ruby types are constructed 
+        # automatically from the GValue, if possible. 
+        #
+        # For example, you can read the ICC profile from an image like this:
+        #
+        #    profile = image.get_value "icc-profile-data"
+        #
+        # and profile will be a binary string containing the profile. 
+        #
+        # Use #get to fetch a GValue directly.
+        def get_value(name)
+            # get the GValue
+            value = get name
+
+            # pull out the value
+            value = value.get_value
+
+            # unwrap
+            [Vips::Blob, Vips::ArrayDouble, Vips::ArrayImage, 
+                Vips::ArrayInt].each do |cls|
+                if value.is_a? cls
+                    value = value.get
+                end
+            end
+
+            value
         end
 
         # Add an image, constant or array. 
