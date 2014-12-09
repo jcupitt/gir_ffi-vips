@@ -87,14 +87,6 @@ class Argument # :nodoc:
         # array-ize
         value = Argument::arrayize prop.value_type, value
 
-        # enums must be unwrapped, not sure why, they are wrapped 
-        # automatically
-        if prop.is_a? GObject::ParamSpecEnum
-            # get the ruby class for this gtype
-            klass = GirFFI::Builder.build_by_gtype prop.value_type
-            value = klass.to_native value, 1
-        end
-
         # blob-ize
         if GObject::type_is_a(prop.value_type, Vips::TYPE_BLOB)
             if not value.is_a? Vips::Blob
