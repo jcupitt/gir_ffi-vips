@@ -90,17 +90,9 @@ class Argument # :nodoc:
         # enums must be unwrapped, not sure why, they are wrapped 
         # automatically
         if prop.is_a? GObject::ParamSpecEnum
-            name = GObject.type_name prop.value_type
-            if name =~ /Vips(.*)/
-                name = $~[1]
-            end
-            sym = name.to_sym
-            # this enum may not have been demand-loaded yet
-            Vips::load_class sym
-            if not Vips.constants.include? sym
-                raise Vips::Error, "Enum #{sym} is not defined."
-            end
-            value = (Vips.const_get sym).to_native value, 1
+            # get the ruby class for this gtype
+            klass = GirFFI::Builder.build_by_gtype prop.value_type
+            value = klass.to_native value, 1
         end
 
         # blob-ize
