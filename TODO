@@ -2,5 +2,10 @@
 
 - have another go with :include:, surely there's some way we could do it
 
-- test ArrayImageConst ... can we use it as a drop-in replacement for
-  Vips::ArrayImage?
+- ARGV handling
+
+- handle shutdown
+
+- leak test
+
+- test suite

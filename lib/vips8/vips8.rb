@@ -5,8 +5,10 @@
 # License::   MIT
 
 # about as crude as you could get
-#$debug = true
-$debug = false
+$debug = true
+#$debug = false
+
+Vips::leak_set(true) if $debug
 
 def log str # :nodoc:
     if $debug
@@ -52,7 +54,7 @@ class Argument # :nodoc:
                 raise Vips::Error, "Argument must contain at least one image."
             end
 
-            value = value.map {|x| imageize match_image, x}
+            value = value.map {|x| Argument::imageize match_image, x}
 
             super(value)
         end
@@ -93,6 +95,8 @@ class Argument # :nodoc:
                 name = $~[1]
             end
             sym = name.to_sym
+            # this enum may not have been demand-loaded yet
+            Vips::load_class sym
             if not Vips.constants.include? sym
                 raise Vips::Error, "Enum #{sym} is not defined."
             end
@@ -905,14 +909,14 @@ module Vips
         def ifthenelse(th, el, *args) 
             match_image = [th, el, self].find {|x| x.is_a? Vips::Image}
 
-            if not th.is_a? Vips.Image
-                th = imageize match_image, th
+            if not th.is_a? Vips::Image
+                th = Argument::imageize match_image, th
             end
             if not el.is_a? Vips::Image
-                el = imageize match_image, el
+                el = Argument::imageize match_image, el
             end
 
-            call_base "ifthenelse", self, "", [th, el] + args
+            Vips::call_base "ifthenelse", self, "", [th, el] + args
         end
 
         #--
