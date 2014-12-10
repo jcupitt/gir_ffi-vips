@@ -1,3 +1,7 @@
+#--
+# This file generated automatically. Do not edit!
+#++
+
 ##
 # :singleton-method: system
 # :call-seq:
@@ -3221,3 +3225,4 @@
 # Options:
 # [gamma] Image gamma, input gdouble
 # [int-output] Integer output, input gboolean
+

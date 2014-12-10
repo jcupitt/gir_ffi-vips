@@ -5,8 +5,8 @@
 # License::   MIT
 
 # about as crude as you could get
-$debug = true
-#$debug = false
+#$debug = true
+$debug = false
 
 def log str # :nodoc:
     if $debug
@@ -185,9 +185,9 @@ module Vips
     # :nodoc:
     class Object
         def self.finalize object_id
-            puts "Vips::Object.finalize: finalizing #{object_id}"
+            log "Vips::Object.finalize: finalizing #{object_id}"
 
-            # how do we call g_object_unref?
+            # how do we call g_object_unref()?
             # we could pass this method the result of to_ptr
         end
 
@@ -981,8 +981,6 @@ module Vips
             Vips::call_base "ifthenelse", self, "", [th, el] + args
         end
 
-        # :include:dynamic-methods.rdoc
-
     end
 
     # This method generates rdoc comments for all the dynamically bound
@@ -1109,4 +1107,10 @@ module Vips
         generate_class.(TYPE_OPERATION)
     end
 
+end
+
+module Vips
+    class Image
+#:include: dynamic-methods.rb
+    end
 end
