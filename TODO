@@ -2,8 +2,6 @@
 
 - something to make a VipsInterpolate from a symbol
 
-- have another go with :include:, surely there's some way we could do it
-
 - ARGV handling? 
 
 - test suite
