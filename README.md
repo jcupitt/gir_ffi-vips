@@ -3,18 +3,20 @@ ruby-vips8
 
 Ruby binding for the vips8 API.
 
-It works, sort-of, but still has missing chunks.  If you want something
-that really works, you need [ruby-vips](https://github.com/jcupitt/ruby-vips).
+It works, but still has some missing features, see `TODO`.  If you want 
+something that really works, you need 
+[ruby-vips](https://github.com/jcupitt/ruby-vips).
 
 # To try it out
 
-Install with:
+Make sure you have vips-7.42 or later installed and that `Vips-8.0.typelib` is
+on your `GI_TYPELIB_PATH`. Then install with:
 
 ```bash
 $ rake install
 ```
 
-Then take a look in `examples/`. 
+And take a look in `examples/`. 
 
 # What's wrong with ruby-vips?
 
@@ -55,4 +57,13 @@ There are some more minor pluses as well:
   ruby-vips had to work hard to offer a nice loader system, but that's all
   built into vips8. It can do things like load and save formatted images to 
   and from memory buffers as well, which just wasn't possible before. 
+
+This binding adds some extra useful features over the old `ruby-vips` binding.
+
+* Full set of arithmetic operator overloads.
+
+* Automatic constant expansion. You can write things like
+  `image.bandjoin(255)` and the 255 will be automatically expanded to an image 
+  and attached as an extra band. You can mix int, float, scalar, vector and
+  image constants freely.
 

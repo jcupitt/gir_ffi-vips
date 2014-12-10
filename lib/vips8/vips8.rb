@@ -1,38 +1,8 @@
 # This module provides a set of overrides for the vips image processing library
-# used via the gir_ffi gem. 
+# used via the gir_ffi gem. It needs vips-7.42 or later to be installed, 
+# and <tt>Vips-8.0.typelib</tt>, the vips typelib, needs to be on your 
+# +GI_TYPELIB_PATH+.
 #
-# It needs vips-7.42 or later to be installed, and <tt>Vips-8.0.typelib</tt> 
-# the vips typelib, needs to be on your +GI_TYPELIB_PATH+.
-#
-# == Example
-#
-#   #!/usr/bin/ruby 
-#   
-#   require 'vips8'
-#   
-#   if ARGV.length < 2
-#       raise "usage: #{$PROGRAM_NAME}: input-file output-file"
-#   end
-#   
-#   # we don't need random access to this image, we will just process 
-#   # top to bottom
-#   im = Vips::Image.new_from_file ARGV[0], :access => :sequential
-#   
-#   # multiply the green channel by 2
-#   im *= [1, 2, 1]
-#   
-#   # make a convolution mask
-#   mask = Vips::Image.new_from_array [
-#           [-1, -1, -1],
-#           [-1, 16, -1],
-#           [-1, -1, -1]], 8
-#   
-#   # convolve the image with the mask
-#   im = im.conv mask
-#   
-#   # write back to the filesystem
-#   im.write_to_file ARGV[1]
-#   
 # Author::    John Cupitt  (mailto:jcupitt@gmail.com)
 # License::   MIT
 
