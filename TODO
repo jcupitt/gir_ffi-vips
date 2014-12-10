@@ -1,25 +1,11 @@
-- leak problem!
-
-	require 'vips8'
-
-	x = Vips::Image.new
-	x = nil
-
-	GC.enable 
-	GC.start
-	GC.start
-	GC.start
-	GC.start
-	^D
-
-  the image is never unreffed, argh
-
-  was this mentioned in the gir_ffi docs? check
+- looks like we need to unref on finalize, waiting on help
 
 - something to make a VipsInterpolate from a symbol
 
 - have another go with :include:, surely there's some way we could do it
 
-- ARGV handling
+- ARGV handling? 
 
 - test suite
+
+  just test binding, no need to test vips

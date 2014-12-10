@@ -182,6 +182,20 @@ module Vips
         end
     end
 
+    # :nodoc:
+    class Object
+        def self.finalize object_id
+            puts "Vips::Object.finalize: finalizing #{object_id}"
+
+            # how do we call g_object_unref?
+            # we could pass this method the result of to_ptr
+        end
+
+        def initialize
+            ObjectSpace.define_finalizer(self, self.class.method(:finalize))
+        end
+    end
+
     class Operation
         # Fetch arg list, remove boring ones, sort into priority order.
         def get_args
