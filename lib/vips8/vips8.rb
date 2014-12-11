@@ -27,7 +27,7 @@ class Argument # :nodoc:
     def initialize(op, prop)
         @op = op
         @prop = prop
-        @name = prop.name
+        @name = prop.name.tr '-', '_'
         @flags = op.get_argument_flags @name
         # we need a bit pattern, not a symbolic name
         @flags = Vips::ArgumentFlags.to_native @flags, 1
@@ -124,6 +124,10 @@ class Argument # :nodoc:
             if value.is_a? cls
                 value = value.get
             end
+        end
+
+        if value.is_a? GirFFI::SizedArray
+            value = value.to_a
         end
 
         value
@@ -238,8 +242,10 @@ Vips::load_class :Image
 # Now x_pos and y_pos will have the coordinates of the minimum value. You can
 # also ask for the top n minimum, for example:
 #
+#   min_value, x_pos, y_pos = image.min :size => 10,
+#       :x_array => true, :x_array => true,
 #
-#
+# Now x_pos and y_pos will be 10-element arrays. 
 #
 
 module Vips
