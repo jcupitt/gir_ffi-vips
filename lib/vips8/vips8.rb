@@ -1,7 +1,5 @@
 # This module provides a set of overrides for the vips image processing library
-# used via the gir_ffi gem. It needs vips-7.42 or later to be installed, 
-# and <tt>Vips-8.0.typelib</tt>, the vips typelib, needs to be on your 
-# +GI_TYPELIB_PATH+.
+# used via the gir_ffi gem. 
 #
 # Author::    John Cupitt  (mailto:jcupitt@gmail.com)
 # License::   MIT
@@ -147,8 +145,98 @@ end
 Vips::load_class :Operation
 Vips::load_class :Image
 
-# This module provides a set of overrides for the vips image processing library
-# used via the gir_ffi gem. 
+# This module provides a set of overrides for the {vips image processing 
+# library}[http://www.vips.ecs.soton.ac.uk]
+# used via the {gir_ffi gem}[https://rubygems.org/gems/gir_ffi]. 
+#
+# It needs vips-7.42 or later to be installed, 
+# and <tt>Vips-8.0.typelib</tt>, the vips typelib, needs to be on your 
+# +GI_TYPELIB_PATH+.
+#
+# == Example
+#
+#    require 'vips8'
+#
+#    if ARGV.length < 2
+#        raise "usage: #{$PROGRAM_NAME}: input-file output-file"
+#    end
+#
+#    im = Vips::Image.new_from_file ARGV[0], :access => :sequential
+#
+#    im *= [1, 2, 1]
+#
+#    mask = Vips::Image.new_from_array [
+#            [-1, -1, -1],
+#            [-1, 16, -1],
+#            [-1, -1, -1]], 8
+#    im = im.conv mask
+#
+#    im.write_to_file ARGV[1]
+#
+# This example loads a file, boosts the green channel (I'm not sure why), 
+# sharpens the image, and saves it back to disc again. 
+#
+# Vips::Image.new_from_file can load any image file supported by vips. In this
+# example, we will be accessing pixels top-to-bottom as we sweep through the
+# image reading and writing, so :sequential access mode is best for us. The
+# default mode is :random, this allows for full random access to image pixels,
+# but is slower and needs more memory. See the libvips API docs for full details
+# on the various modes available. You can also load formatted images from 
+# memory buffers or create images that let address raw memory arrays. 
+#
+# Multiplying the image by an array constant uses one array element for each
+# image band. This line assumes that the input image has three bands and will
+# double the middle band. For RGB images, that's doubling green.
+#
+# Vips::Image.new_from_array creates an image from an array constant. The 8 at
+# the end sets the scale: the amount to divide the image by after 
+# integer convolution. See the libvips API docs for vips_conv() (the operation
+# invoked by Vips::Image.conv) for details. 
+#
+# Vips::Image.write_to_file writes an image back to the filesystem. It can write
+# any format supported by vips: the file type is set from the filename suffix.
+# You can also write formatted images to memory buffers, or dump image data to a
+# raw memory array. 
+#
+# == How it works
+#
+# The C sources to libvips include a set of specially formatted
+# comments which describe its interfaces. When you compile the library,
+# gobject-introspection generates <tt>Vips-8.0.typelib</tt>, a file 
+# describing how to use libvips.
+#
+# gir_ffi loads this typelib and uses it to let you call functions in libvips
+# directly from Ruby. However, the interface you get from raw gir_ffi is 
+# rather ugly, so ruby-vips8 adds a set of overrides which try to make it 
+# nicer to use. 
+#
+# == Automatic wrapping
+#
+# ruby-vips8 adds a Vips::Image.method_missing handler to Vips::Image and uses
+# it to look up vips operations. For example, the libvips operation +add+, which
+# appears in C as vips_add(), appears in Ruby as Vips::image.add. 
+#
+# The operation's list of required arguments is searched and the first input 
+# image is set to the value of +self+. Operations which do not take an input 
+# image, such as Vips::Image.black, appear as class methods. The remainder of
+# the arguments you supply in the function call are used to set the other
+# required input arguments. If the final supplied argument is a hash, it is used
+# to set any optional input arguments. The result is the required output 
+# argument if there is only one result, or an array of values if the operation
+# produces several results. 
+#
+# For example, Vips::image.min, the vips operation that searches an image for 
+# the minimum value, has a large number of optional arguments. You can use it to
+# find the minimum value like this:
+#
+#   min_value = image.min
+#
+# You can ask it to return the position of the minimum with :x and :y.
+#   
+#   min_value, x_pos, y_pos = image.min :x => true, :y => true
+#
+#
+#
 
 module Vips
 
@@ -344,9 +432,8 @@ module Vips
         if op2 != op
             all_args = op2.get_args()
 
-            # find optional unassigned output args
+            # find optional output args
             optional_output = all_args.select do |arg|
-                not arg.isset and
                 (arg.flags & Vips::ArgumentFlags[:output]) != 0 and
                 (arg.flags & Vips::ArgumentFlags[:required]) == 0 
             end
@@ -373,16 +460,12 @@ module Vips
             end
         end
 
-        out_dict = {}
         optional_values.each do |name, value|
             # we are passed symbols as keys
             name = name.to_s
             if optional_output.has_key? name
-                out_dict[name] = optional_output[name].get_value
+                out << optional_output[name].get_value
             end
-        end
-        if out_dict != {}
-            out << out_dict
         end
 
         if out.length == 1

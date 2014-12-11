@@ -1,4 +1,16 @@
+- try:
+
+	x.min :x => true, :y => true, :size => 10, :x_array => true
+
+	  Vips::Error: No such option 'x_array',
+
+  need to change _ to - ?
+
 - looks like we need to unref on finalize, waiting on help
+
+- needs docs for .width, .height etc. 
+
+- what about docs for VipsPrecision etc. ?
 
 - something to make a VipsInterpolate from a symbol
 
