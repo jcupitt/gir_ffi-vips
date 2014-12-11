@@ -235,6 +235,10 @@ Vips::load_class :Image
 #   
 #   min_value, x_pos, y_pos = image.min :x => true, :y => true
 #
+# Now x_pos and y_pos will have the coordinates of the minimum value. You can
+# also ask for the top n minimum, for example:
+#
+#
 #
 #
 
