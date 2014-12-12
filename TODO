@@ -1,5 +1,13 @@
 - looks like we need to unref on finalize, waiting on help
 
+- test examples from intro
+
+  test draw operations
+
+  test bandjoin variations
+
+  test ifthenelse variations
+
 - needs docs for .width, .height etc. 
 
 - what about docs for VipsPrecision etc. ?

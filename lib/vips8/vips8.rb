@@ -214,6 +214,11 @@ Vips::load_class :Image
 # rather ugly, so ruby-vips8 adds a set of overrides which try to make it 
 # nicer to use. 
 #
+# The API you end up with is a Ruby-ish version of the C API. Full documentation
+# on the operations and what they do is there, you can use it directly. This
+# document explains the features of the Ruby API and lists the available libvips
+# operations very briefly. 
+#
 # == Automatic wrapping
 #
 # ruby-vips8 adds a Vips::Image.method_missing handler to Vips::Image and uses
@@ -239,13 +244,144 @@ Vips::load_class :Image
 #   
 #   min_value, x_pos, y_pos = image.min :x => true, :y => true
 #
-# Now x_pos and y_pos will have the coordinates of the minimum value. You can
-# also ask for the top n minimum, for example:
+# Now x_pos and y_pos will have the coordinates of the minimum value. There's
+# actually a convenience function for this, Vips::Image.minpos.
+#
+# You can also ask for the top n minimum, for example:
 #
 #   min_value, x_pos, y_pos = image.min :size => 10,
 #       :x_array => true, :x_array => true,
 #
 # Now x_pos and y_pos will be 10-element arrays. 
+#
+# Because operations are member functions and return the result image, you can
+# chain them. For example, you can write:
+#
+#   result_image = image.sin().pow(2)
+#
+# to calculate the square of the sine for each pixel. There are also a full set
+# of arithmetic operator overloads, see below.
+#
+# libvips types are also automatically wrapped. The override looks at the type 
+# of argument required by the operation and converts the value you supply, 
+# when it can. For example, "linear" takes a Vips::ArrayDouble as an argument 
+# for the set of constants to use for multiplication. You can supply this 
+# value as an integer, a float, or some kind of compound object and it 
+# will be converted for you. You can write:
+#
+#   result_image = image.linear 1, 3 
+#   result_image = image.linear 12.4, 13.9 
+#   result_image = image.linear [1, 2, 3], [4, 5, 6] 
+#   result_image = image.linear 1, [4, 5, 6] 
+#
+# And so on. A set of overloads are defined for Vips::Image.linear, see below.
+#
+# It does a couple of more ambitious conversions. It will automatically convert
+# to and from the various vips types, like Vips::Blob and Vips::ArrayImage. For
+# example, you can read the ICC profile out of an image like this: 
+#
+#   profile = im.get_value "icc-profile-data"
+#
+# and profile will be a string.
+#
+# If an operation takes several input images, you can use a constant for all but
+# one of them and the wrapper will expand the constant to an image for you. For
+# example, Vips::Image.ifthenelse uses a condition image to pick pixels 
+# between a then and an else image:
+#
+#   result_image = condition_image.ifthenelse then_image, else_image
+#
+# You can use a constant instead of either the then or the else parts and it
+# will be expanded to an image for you. If you use a constant for both then and
+# else, it will be expanded to match the condition image. For example:
+#
+#    result_image = condition_image.ifthenelse [0, 255, 0], [255, 0, 0]
+#
+# Will make an image where true pixels are green and false pixels are red.
+#
+# This is useful for Vips::Image.bandjoin, the thing to join two or more 
+# images up bandwise. You can write:
+#
+#   rgba = rgb.bandjoin 255
+#
+# to add a constant 255 band to an image, perhaps to add an alpha channel. Of
+# course you can also write:
+#
+#   result_image = image1.bandjoin image2
+#   result_image = image1.bandjoin [image2, image3]
+#   result_image = Vips::Image.bandjoin [image1, image2, image3]
+#   result_image = image1.bandjoin [image2, 255]
+#
+# and so on. 
+# 
+# == Automatic rdoc documentation
+#
+# These API docs are generated automatically by Vips::generate_rdoc. It examines
+# libvips and writes a summary of each operation and the arguments and options
+# that operation expects. 
+# 
+# Use the C API docs for more detail.
+#
+# == Exceptions
+#
+# The wrapper spots errors from vips operations and raises the Vips::Error
+# exception. You can catch it in the usual way. 
+# 
+# == Draw operations
+#
+# Paint operations like Vips::Image.draw_circle and Vips::Image.draw_line 
+# modify their input image. This
+# makes them hard to use with the rest of libvips: you need to be very careful
+# about the order in which operations execute or you can get nasty crashes.
+#
+# The wrapper spots operations of this type and makes a private copy of the
+# image in memory before calling the operation. This stops crashes, but it does
+# make it inefficient. If you draw 100 lines on an image, for example, you'll
+# copy the image 100 times. The wrapper does make sure that memory is recycled
+# where possible, so you won't have 100 copies in memory. 
+#
+# If you want to avoid the copies, you'll need to call drawing operations
+# yourself.
+#
+# == Overloads
+#
+# The wrapper defines the usual set of arithmetic, boolean and relational
+# overloads on image. You can mix images, constants and lists of constants
+# (almost) freely. For example, you can write:
+#
+#   result_image = ((image * [1, 2, 3]).abs < 128) | 4
+#
+# == Expansions
+#
+# Some vips operators take an enum to select an action, for example 
+# Vips::Image.math can be used to calculate sine of every pixel like this:
+#
+#   result_image = image.math :sin
+#
+# This is annoying, so the wrapper expands all these enums into separate members
+# named after the enum. So you can write:
+#
+#   result_image = image.sin
+#
+# == Convenience functions
+#
+# The wrapper defines a few extra useful utility functions: 
+# Vips::Image.get_value(), Vips::Image.set_value() Vips::Image.bandsplit(), 
+# Vips::Image.maxpos() Vips::Image.minpos(). 
+#
+# == Command-line option parsing
+#
+# GLib includes a command-line option parser, and libvips defines a set of 
+# standard flags you can use with it. For example:
+#
+#   require 'vips8'
+#
+#   context = GLib::OptionContext.new " - test stuff"
+#   main_group = GLib::OptionGroup "main", 
+#     "Main options", "Main options for this program", nil
+#   context.set_main_group main_group
+#   Vips::add_option_entries main_group
+#   context.parse ARGV
 #
 
 module Vips
@@ -934,17 +1070,17 @@ module Vips
 
         # Return the largest integral value not greater than the argument.
         def floor
-            round Vips::OperationRound[:floor]
+            round :floor
         end
 
         # Return the smallest integral value not less than the argument.
         def ceil
-            round Vips::OperationRound[:ceil]
+            round :ceil
         end
 
         # Return the nearest integral value.
         def rint
-            round Vips::OperationRound[:rint]
+            round :rint
         end
 
         # :call-seq:
@@ -987,77 +1123,77 @@ module Vips
 
         # Return the real part of a complex image.
         def real
-            complexget Vips::OperationComplexget[:real]
+            complexget :real
         end
 
         # Return the imaginary part of a complex image.
         def imag
-            complexget Vips::OperationComplexget[:imag]
+            complexget :imag
         end
 
         # Return an image converted to polar coordinates.
         def polar
-            complex Vips::OperationComplex[:polar]
+            complex :polar
         end
 
         # Return an image converted to rectangular coordinates.
         def rect
-            complex Vips::OperationComplex[:rect] 
+            complex :rect 
         end
 
         # Return the complex conjugate of an image.
         def conj
-            complex Vips::OperationComplex[:conj] 
+            complex :conj 
         end
 
         # Return the sine of an image in degrees.
         def sin
-            math Vips::OperationMath[:sin] 
+            math :sin 
         end
 
         # Return the cosine of an image in degrees.
         def cos
-            math Vips::OperationMath[:cos]
+            math :cos
         end
 
         # Return the tangent of an image in degrees.
         def tan
-            math Vips::OperationMath[:tan]
+            math :tan
         end
 
         # Return the inverse sine of an image in degrees.
         def asin
-            math Vips::OperationMath[:asin]
+            math :asin
         end
 
         # Return the inverse cosine of an image in degrees.
         def acos
-            math Vips::OperationMath[:acos]
+            math :acos
         end
 
         # Return the inverse tangent of an image in degrees.
         def atan
-            math Vips::OperationMath[:atan]
+            math :atan
         end
 
         # Return the natural log of an image.
         def log
-            math Vips::OperationMath[:log]
+            math :log
         end
 
         # Return the log base 10 of an image.
         def log10
-            math Vips::OperationMath[:log10]
+            math :log10
         end
 
         # Return e ** pixel.
         def exp
-            math Vips::OperationMath[:exp]
+            math :exp
         end
 
         # Return 10 ** pixel.
         def exp10
-            math Vips::OperationMath[:exp10]
+            math :exp10
         end
 
         # Select pixels from +th+ if +self+ is non-zero and from +el+ if
