@@ -1,21 +1,34 @@
 - looks like we need to unref on finalize, waiting on help
 
-- test examples from intro
+- what about docs for VipsPrecision etc. ? can we just refer to the libvips
+  API docs? we do thaht for VipsAccess in the intro
 
-  test draw operations
+- something to make a VipsInterpolate from a symbol? try calling affine and
+  setting an interpolator
 
-  test bandjoin variations
+	x = Vips::Interpolate.new "bilinear"
 
-  test ifthenelse variations
+  works ... try adding code to set_value
 
-- needs docs for .width, .height etc. 
-
-- what about docs for VipsPrecision etc. ?
-
-- something to make a VipsInterpolate from a symbol
-
-- ARGV handling? 
+  add a note on this to the intro
 
 - test suite
 
   just test binding, no need to test vips
+
+- why doesn't this example code work?
+
+# == Command-line option parsing
+#
+# GLib includes a command-line option parser, and libvips defines a set of 
+# standard flags you can use with it. For example:
+#
+#   require 'vips8'
+#
+#   context = GLib::OptionContext.new " - test stuff"
+#   main_group = GLib::OptionGroup "main", 
+#     "Main options", "Main options for this program", nil
+#   context.set_main_group main_group
+#   Vips::add_option_entries main_group
+#   context.parse ARGV
+#

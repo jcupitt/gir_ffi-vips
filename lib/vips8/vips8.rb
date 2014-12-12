@@ -82,6 +82,21 @@ class Argument # :nodoc:
         value
     end
 
+    def self.unwrap value
+        [Vips::Blob, Vips::ArrayDouble, Vips::ArrayImage, 
+            Vips::ArrayInt].each do |cls|
+            if value.is_a? cls
+                value = value.get
+                break 
+            end
+        end
+
+        # we could try to unpack GirFFI::SizedArray with to_a, but that's not
+        # the right thing to do for blobs like profiles
+
+        value
+    end
+
     public
 
     def set_value(match_image, value)
@@ -116,21 +131,7 @@ class Argument # :nodoc:
     end
 
     def get_value
-        value = @op.property(@name).get_value
-
-        # unwrap
-        [Vips::Blob, Vips::ArrayDouble, Vips::ArrayImage, 
-            Vips::ArrayInt].each do |cls|
-            if value.is_a? cls
-                value = value.get
-            end
-        end
-
-        if value.is_a? GirFFI::SizedArray
-            value = value.to_a
-        end
-
-        value
+        Argument::unwrap(@op.property(@name).get_value)
     end
 
     def description
@@ -184,9 +185,10 @@ Vips::load_class :Image
 # example, we will be accessing pixels top-to-bottom as we sweep through the
 # image reading and writing, so :sequential access mode is best for us. The
 # default mode is :random, this allows for full random access to image pixels,
-# but is slower and needs more memory. See the libvips API docs for full details
+# but is slower and needs more memory. See the libvips API docs for VipsAccess
+# for full details
 # on the various modes available. You can also load formatted images from 
-# memory buffers or create images that let address raw memory arrays. 
+# memory buffers or create images that wrap C-style memory arrays. 
 #
 # Multiplying the image by an array constant uses one array element for each
 # image band. This line assumes that the input image has three bands and will
@@ -250,16 +252,17 @@ Vips::load_class :Image
 # You can also ask for the top n minimum, for example:
 #
 #   min_value, x_pos, y_pos = image.min :size => 10,
-#       :x_array => true, :x_array => true,
+#       :x_array => true, :y_array => true
 #
 # Now x_pos and y_pos will be 10-element arrays. 
 #
 # Because operations are member functions and return the result image, you can
 # chain them. For example, you can write:
 #
-#   result_image = image.sin().pow(2)
+#   result_image = image.imag.cos
 #
-# to calculate the square of the sine for each pixel. There are also a full set
+# to calculate the cosing of the imaginary part of a complex image. 
+# There are also a full set
 # of arithmetic operator overloads, see below.
 #
 # libvips types are also automatically wrapped. The override looks at the type 
@@ -282,7 +285,7 @@ Vips::load_class :Image
 #
 #   profile = im.get_value "icc-profile-data"
 #
-# and profile will be a string.
+# and profile will be a byte array.
 #
 # If an operation takes several input images, you can use a constant for all but
 # one of them and the wrapper will expand the constant to an image for you. For
@@ -366,23 +369,8 @@ Vips::load_class :Image
 # == Convenience functions
 #
 # The wrapper defines a few extra useful utility functions: 
-# Vips::Image.get_value(), Vips::Image.set_value() Vips::Image.bandsplit(), 
-# Vips::Image.maxpos() Vips::Image.minpos(). 
-#
-# == Command-line option parsing
-#
-# GLib includes a command-line option parser, and libvips defines a set of 
-# standard flags you can use with it. For example:
-#
-#   require 'vips8'
-#
-#   context = GLib::OptionContext.new " - test stuff"
-#   main_group = GLib::OptionGroup "main", 
-#     "Main options", "Main options for this program", nil
-#   context.set_main_group main_group
-#   Vips::add_option_entries main_group
-#   context.parse ARGV
-#
+# Vips::Image.get_value, Vips::Image.set_value, Vips::Image.bandsplit, 
+# Vips::Image.maxpos, Vips::Image.minpos. 
 
 module Vips
 
@@ -876,6 +864,70 @@ module Vips
             Vips::call_base saver, self, option_string, args
         end
 
+        ##
+        # :method: width
+        # :call-seq:
+        #    width => integer
+        #
+        # Image width, in pixels. 
+
+        ##
+        # :method: height
+        # :call-seq:
+        #    height => integer
+        #
+        # Image height, in pixels. 
+
+        ##
+        # :method: bands
+        # :call-seq:
+        #    bands => integer
+        #
+        # Number of image bands (channels). 
+
+        ##
+        # :method: format
+        # :call-seq:
+        #    format => Vips::BandFormat
+        #
+        # Image pixel format. For example, an 8-bit unsigned image has the
+        # :uchar format. 
+
+        ##
+        # :method: interpretation
+        # :call-seq:
+        #    interpretation => Vips::Interpretation
+        #
+        # Image interpretation. 
+
+        ##
+        # :method: coding
+        # :call-seq:
+        #    coding => Vips::Coding
+        #
+        # Image coding. 
+
+        ##
+        # :method: filename
+        # :call-seq:
+        #    filename => string
+        #
+        # The name of the file this image was originally loaded from.
+
+        ##
+        # :method: xres
+        # :call-seq:
+        #    xres => float
+        #
+        # The horizontal resolution of the image, in pixels per millimetre. 
+
+        ##
+        # :method: yres
+        # :call-seq:
+        #    yres => float
+        #
+        # The vertical resolution of the image, in pixels per millimetre. 
+
         # Set a metadata item on an image. Ruby types are automatically
         # transformed into the matching GValue, if possible. 
         #
@@ -928,15 +980,7 @@ module Vips
             # pull out the value
             value = value.get_value
 
-            # unwrap
-            [Vips::Blob, Vips::ArrayDouble, Vips::ArrayImage, 
-                Vips::ArrayInt].each do |cls|
-                if value.is_a? cls
-                    value = value.get
-                end
-            end
-
-            value
+            Argument::unwrap(value)
         end
 
         # Add an image, constant or array. 
