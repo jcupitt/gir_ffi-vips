@@ -68,8 +68,44 @@
   does operation get another ref? or do all vars "share" a single reference
   to the object? I guess they share
 
-  if they do, do we have to add lots of explicit unrefs ourselves?
+  if they do, do we have to add lots of explicit unrefs ourselves? there must
+  be a single ruby reference for every object
 
+  try again
+
+  	require 'gir_ffi'
+	GirFFI.setup :Vips
+	Vips::init($PROGRAM_NAME)
+	Vips::cache_set_max 0
+	op = Vips::Operation.new "jpegload"
+	op.set_property "filename", "/data/john/pics/k2.jpg"
+	Vips::Object::print_all
+
+	op has count 1
+
+	op2 = Vips::cache_operation_build op
+	Vips::Object::print_all
+
+	image has count 1, op has count 3
+	1 count is a ref on the original object
+	1 count is the ref that op2 owns
+	1 count is a ref from image
+
+	GObject::Lib.g_object_unref op
+	op = nil
+
+	image has count 1, op has count 2
+
+	out = op2.property("out").get_value
+
+	image has count 2, op has count 2
+
+	op2.unref_outputs
+
+	image has count 1, op has count 2 ... op2 is the final ref, we'll
+	unref on next GC
+
+	use .to_ptr to see if two objects share an underlying gobject pointer
 
 
 

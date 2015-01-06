@@ -5,8 +5,8 @@
 # License::   MIT
 
 # about as crude as you could get
-#$debug = true
-$debug = false
+$debug = true
+#$debug = false
 
 def log str # :nodoc:
     if $debug
@@ -406,19 +406,6 @@ module Vips
         end
     end
 
-    class Object
-        def self.finalize object_id
-            log "Vips::Object.finalize: finalizing #{object_id}"
-
-            # how do we call g_object_unref()?
-            # we could pass this method the result of to_ptr
-        end
-
-        def initialize
-            ObjectSpace.define_finalizer(self, self.class.method(:finalize))
-        end
-    end
-
     class Operation
         # Fetch arg list, remove boring ones, sort into priority order.
         def get_args
@@ -558,12 +545,46 @@ module Vips
 
         # call
         op2 = Vips::cache_operation_build op
+
+        # cases:
+        #   cache miss 
+        #       before: op count 1
+        #       after: op count 2 (plus another ref for each output image)
+        #
+        #       + op is reffed, built, added to cache and returned as op2 
+        #       + gir_ffi spots that op and op2 are the same
+        #       and shares the pointer
+        #       + we will therefore only get a single unref on GC, we need to do
+        #       another unref explicitly
+        #
+        #   cache hit
+        #       before: op count 1
+        #       after: op count 1, op2 count 1 plus another ref for each 
+        #           output image
+        #
+        #       + no need to do anything
+        #
+        #   build error
+        #       before: op count 1
+        #       after: op count 1
+        #
+        #       + it'll be unreffed on GC, no need to do anything
+
         if op2 == nil
             raise Vips::Error
         end
 
-        # rescan args if op2 is different from op
-        if op2 != op
+        # are op and op2 the same underlying object? ie. we had a cache miss?
+        miss = op.to_ptr == op2.to_ptr
+
+        # see above, in the case of a miss we need an explcit extra unref
+        if miss
+            log "extra unref on cache miss"
+            GObject::Lib.g_object_unref op
+        end
+
+        # rescan args 
+        if not miss
             all_args = op2.get_args()
 
             # find optional output args
