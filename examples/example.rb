@@ -8,7 +8,7 @@ if ARGV.length < 2
     raise "usage: #{$PROGRAM_NAME}: input-file output-file"
 end
 
-(1..100).each do |i|
+1.times do |i|
     puts "loop #{i}"
 
     # we don't need random access to this image, we will just process 
