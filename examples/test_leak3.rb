@@ -2,34 +2,51 @@
 
 require 'gir_ffi'
 
+require 'tracer'
+
+Tracer.add_filter do |event, file, line, id, binding, klass, *rest|
+      "file" =~ /gir/
+end
+
 GirFFI.setup :Vips
+
 Vips::init($PROGRAM_NAME)
-Vips::cache_set_max 0
+
+puts ""
+puts "** creating operation:"
 op = Vips::Operation.new "jpegload"
 op.set_property "filename", "/data/john/pics/k2.jpg"
-puts "** objects before build:"
 Vips::Object::print_all
 
-op2 = Vips::cache_operation_build op
-puts "** objects after build:"
+puts ""
+puts "** building operation:"
+op.build
 Vips::Object::print_all
 
-GObject::Lib.g_object_unref op
+puts ""
+puts "** fetching output image"
+Tracer::on
+out = op.property("out").get_value
+Tracer::off
+Vips::Object::print_all
+
+puts ""
+puts "** unreffing output objects"
+op.unref_outputs
+Vips::Object::print_all
+
+puts ""
+puts "** freeing operation"
 op = nil
-
-out = op2.property("out").get_value
-
-op2.unref_outputs
-
-op2 = nil
 GC.start
-
-puts "** objects after running operation:"
 Vips::Object::print_all
 
+puts ""
+puts "** freeing image"
 out = nil
 GC.start
-
-puts "** objects after tidy up:"
 Vips::Object::print_all
+
+puts ""
+puts "** done"
 
