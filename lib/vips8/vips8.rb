@@ -543,49 +543,16 @@ module Vips
             end
         end
 
-        # call
-        op2 = Vips::cache_operation_build op
+        # look up in cache
+        old_op = Vips::cache_operation_lookup op
+        if old_op
+            # junk the op we built, use the old op instead
+            log "cache hit ... reusing old op"
+            op = old_op
+            old_op = nil
 
-        # cases:
-        #   cache miss 
-        #       before: op count 1
-        #       after: op count 2 (plus another ref for each output image)
-        #
-        #       + op is reffed, built, added to cache and returned as op2 
-        #       + gir_ffi spots that op and op2 are the same
-        #       and shares the pointer
-        #       + we will therefore only get a single unref on GC, we need to do
-        #       another unref explicitly
-        #
-        #   cache hit
-        #       before: op count 1
-        #       after: op count 1, op2 count 1 plus another ref for each 
-        #           output image
-        #
-        #       + no need to do anything
-        #
-        #   build error
-        #       before: op count 1
-        #       after: op count 1
-        #
-        #       + it'll be unreffed on GC, no need to do anything
-
-        if op2 == nil
-            raise Vips::Error
-        end
-
-        # are op and op2 the same underlying object? ie. we had a cache miss?
-        miss = op.to_ptr == op2.to_ptr
-
-        # see above, in the case of a miss we need an explcit extra unref
-        if miss
-            log "extra unref on cache miss"
-            GObject::Lib.g_object_unref op
-        end
-
-        # rescan args 
-        if not miss
-            all_args = op2.get_args()
+            # rescan args
+            all_args = op.get_args()
 
             # find optional output args
             optional_output = all_args.select do |arg|
@@ -594,6 +561,15 @@ module Vips
             end
             optional_output = Hash[
                 optional_output.map(&:name).zip(optional_output)]
+        else
+            # it's a new op ... build and add to the cache
+            log "cache miss ... building and adding to cache"
+            if op.build != 0
+                log "build failed"
+                raise Vips::Error
+            end
+
+            Vips::cache_operation_add op
         end
 
         # gather output args 
@@ -630,7 +606,7 @@ module Vips
         end
 
         # unref everything now we have refs to all outputs we want
-        op2.unref_outputs
+        op.unref_outputs
 
         log "success! #{name}.out = #{out}"
 

@@ -2,12 +2,6 @@
 
 require 'gir_ffi'
 
-require 'tracer'
-
-Tracer.add_filter do |event, file, line, id, binding, klass, *rest|
-      "file" =~ /gir/
-end
-
 GirFFI.setup :Vips
 
 Vips::init($PROGRAM_NAME)
@@ -45,6 +39,9 @@ puts ""
 puts "** freeing image"
 out = nil
 GC.start
+
+puts ""
+puts "** objects after tidy up:"
 Vips::Object::print_all
 
 puts ""
