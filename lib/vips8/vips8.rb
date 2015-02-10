@@ -42,8 +42,11 @@ class Argument # :nodoc:
         return value if value.is_a? Vips::Image
 
         pixel = (Vips::Image.black(1, 1) + value).cast(match_image.format)
-        pixel.embed(0, 0, match_image.width, match_image.height, 
-                    :extend => :copy)
+        image = pixel.embed(0, 0, match_image.width, match_image.height, 
+                            :extend => :copy)
+        image.copy(:interpretation => match_image.interpretation,
+                   :xres => match_image.xres,
+                   :xres => match_image.xres)
     end
 
     class ArrayImageConst < Vips::ArrayImage # :nodoc: 
