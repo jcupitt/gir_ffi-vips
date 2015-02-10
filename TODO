@@ -1,5 +1,3 @@
-- try using the new cache API
-
 - try making some tests, see ruby-vips8
 
 - break up vips.rb?
