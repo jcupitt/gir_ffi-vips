@@ -16,31 +16,24 @@ require 'jeweler'
 
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
-  gem.name = "ruby-vips8"
-  gem.homepage = "http://github.com/jcupitt/ruby-vips8"
+  gem.name = "gir_ffi-vips"
+  gem.homepage = "http://github.com/jcupitt/gir_ffi-vips"
   gem.license = "MIT"
   gem.summary = %Q{Ruby extension for the vips8 image processing library.}
-  gem.description = %Q{ruby-vips8 is a ruby extension for vips8. It is extremely fast and it can process huge images without requiring the entire image to be loaded into memory.}
+  gem.description = %Q{ruby-vips8 is a ruby extension for vips8. It is extremely fast and it can process huge images without loading the entire image into memory.}
   gem.email = "jcupitt@gmail.com"
   gem.authors = ["John Cupitt"]
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+require 'rspec/core'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-desc "Code coverage detail"
-task :simplecov do
-  ENV['COVERAGE'] = "true"
-  Rake::Task['test'].execute
-end
-
-task :default => :test
+task :default => :spec
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|

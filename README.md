@@ -1,10 +1,12 @@
 ruby-vips8
 ==========
 
-Ruby binding for the vips8 API. This is made with `gir_ffi` and currently has
-some problems with unreferencing.  If you want 
-something that actually works, you need 
-[ruby-vips](https://github.com/jcupitt/ruby-vips).
+Ruby binding for the vips8 API made with
+[gir_ffi](https://github.com/mvz/gir_ffi).
+
+This binding works well but currently has some problems with unreferencing,
+so you'll see large memory leaks. If you want something that does not leak,
+you need [ruby-vips](https://github.com/jcupitt/ruby-vips).
 
 # To try it out
 
