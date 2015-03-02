@@ -9,7 +9,7 @@ Vips::init($PROGRAM_NAME)
 puts ""
 puts "** creating operation:"
 op = Vips::Operation.new "jpegload"
-op.set_property "filename", "/data/john/pics/k2.jpg"
+op.set_property "filename", "/home/john/pics/k2.jpg"
 Vips::Object::print_all
 
 puts ""
@@ -19,9 +19,7 @@ Vips::Object::print_all
 
 puts ""
 puts "** fetching output image"
-Tracer::on
 out = op.property("out").get_value
-Tracer::off
 Vips::Object::print_all
 
 puts ""

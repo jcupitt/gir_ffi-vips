@@ -5,8 +5,8 @@
 # License::   MIT
 
 # about as crude as you could get
-$vips_debug = true
-#$vips_debug = false
+#$vips_debug = true
+$vips_debug = false
 
 def log str # :nodoc:
     if $vips_debug
