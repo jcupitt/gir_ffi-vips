@@ -12,8 +12,6 @@
 
 - add some more tests
 
-- break up vips.rb? see ruby-vips8
-
 - test docs
 
 - what about docs for VipsPrecision etc. ? can we just refer to the libvips
