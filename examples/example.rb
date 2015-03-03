@@ -35,6 +35,3 @@ end
 im = nil
 mask = nil
 GC.start
-GC.start
-GC.start
-GC.start

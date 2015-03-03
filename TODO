@@ -1,3 +1,25 @@
+- this fails:
+
+require 'vips8'
+Vips::cache_set_max 0
+im = Vips::Image.new_from_file "/home/john/pics/k2.jpg"
+puts ""
+puts "** after new_from_file"
+GC.start
+Vips::Object::print_all
+im.write_to_file("x.v")
+
+segv ... im is unreffed by the GC
+
+  when we get_value from the GValue, do we need to create a new reference?
+
+  we should, we are making a new ruby wrapping of a gobject
+
+  see examples/test_leak5.rb
+
+
+
+
 - optional output args need to come in a hash
 
   check the test as well
