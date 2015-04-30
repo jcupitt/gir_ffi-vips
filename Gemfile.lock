@@ -71,7 +71,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.0)
-  gir_ffi (~> 0.7.6)
-  jeweler (~> 2.0.1)
+  gir_ffi (~> 0.7)
+  jeweler (~> 2.0)
   rdoc (~> 3.12)
-  rspec
+  rspec (~> 3.2)
