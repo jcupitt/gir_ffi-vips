@@ -2,10 +2,13 @@
 
 require 'vips8'
 
-x = Vips::Image.new 
+Vips::leak_set true
 
-puts "after first build"
+puts "build"
+x = Vips::Image.new 
 Vips::Object::print_all
 
+puts "free"
 x = nil
 GC.start
+Vips::Object::print_all

@@ -2,7 +2,8 @@
 
 require 'vips8'
 
-Vips::cache_set_max 0
+#Vips::cache_set_max 0
+Vips::leak_set true
 
 if ARGV.length < 2
     raise "usage: #{$PROGRAM_NAME}: input-file output-file"
