@@ -5,7 +5,8 @@ Ruby binding for the vips8 API made with
 [gir_ffi](https://github.com/mvz/gir_ffi).
 
 This binding works well but currently has some problems with unreferencing,
-so you'll see large memory leaks. If you want something that does not leak,
+so you'll see small memory leaks, up to about 20 bytes per operation call. 
+If you want something that does not leak,
 you need [ruby-vips](https://github.com/jcupitt/ruby-vips).
 
 # To try it out
@@ -68,3 +69,6 @@ This binding adds some extra useful features over the old `ruby-vips` binding.
   and attached as an extra band. You can mix int, float, scalar, vector and
   image constants freely.
 
+* Automatically-generated docs. The old ruby-vips binding had a large set of
+  docs written by hand. This new binding automatically reformats the C 
+  docs for Ruby, so they should always be complete and up to date. 
