@@ -169,12 +169,17 @@ module Vips
             end
         end
 
+        opt_out = {}
         optional_values.each do |name, value|
             # we are passed symbols as keys
             name = name.to_s
             if optional_output.has_key? name
-                out << optional_output[name].get_value
+                opt_out[name] = optional_output[name].get_value
             end
+        end
+
+        if opt_out.length > 0 
+            out << opt_out
         end
 
         if out.length == 1

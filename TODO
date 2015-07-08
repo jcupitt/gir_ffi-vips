@@ -1,15 +1,15 @@
 - this fails:
 
-require 'vips8'
-Vips::cache_set_max 0
-im = Vips::Image.new_from_file "/home/john/pics/k2.jpg"
-puts ""
-puts "** after new_from_file"
-GC.start
-Vips::Object::print_all
-im.write_to_file("x.v")
+	require 'vips8'
+	Vips::cache_set_max 0
+	im = Vips::Image.new_from_file "/home/john/pics/k2.jpg"
+	puts ""
+	puts "** after new_from_file"
+	GC.start
+	Vips::Object::print_all
+	im.write_to_file("x.v")
 
-segv ... im is unreffed by the GC
+  segv ... im is unreffed by the GC
 
   when we get_value from the GValue, do we need to create a new reference?
 
@@ -17,12 +17,11 @@ segv ... im is unreffed by the GC
 
   see examples/test_leak5.rb
 
+- see https://github.com/mvz/gir_ffi/issues/54
 
+  gir_ffi needs to track transfer notation
 
-
-- optional output args need to come in a hash
-
-  check the test as well
+- test maxpos etc., part of the binding, not part of libvips
 
 - need to add [] and () overloads 
 
