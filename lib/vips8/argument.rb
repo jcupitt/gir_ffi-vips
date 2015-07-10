@@ -8,6 +8,7 @@ module Vips
     TYPE_BLOB = GObject::type_from_name "VipsBlob"
     TYPE_IMAGE = GObject::type_from_name "VipsImage"
     TYPE_OPERATION = GObject::type_from_name "VipsOperation"
+    TYPE_INTERPOLATE = GObject::type_from_name "VipsInterpolate"
 
     class Argument # :nodoc:
         attr_reader :op, :prop, :name, :flags, :priority, :isset
@@ -82,8 +83,8 @@ module Vips
                 end
             end
 
-            # we could try to unpack GirFFI::SizedArray with to_a, but that's not
-            # the right thing to do for blobs like profiles
+            # we could try to unpack GirFFI::SizedArray with to_a, but that's 
+            # not the right thing to do for blobs like profiles
 
             value
         end
@@ -105,6 +106,13 @@ module Vips
             if GObject::type_is_a(prop.value_type, Vips::TYPE_IMAGE)
                 if not value.is_a? Vips::Image
                     value = imageize match_image, value
+                end
+            end
+
+            # interpolator-ize
+            if GObject::type_is_a(prop.value_type, Vips::TYPE_INTERPOLATE)
+                if not value.is_a? Vips::Interpolate
+                    value = Vips::Interpolate.new(value.to_s)
                 end
             end
 
