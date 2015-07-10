@@ -126,6 +126,7 @@ module Vips
                 value = new_image
             end
 
+            log "setting property #{@name} to #{value}"
             op.set_property @name, value
         end
 

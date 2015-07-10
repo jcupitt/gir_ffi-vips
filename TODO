@@ -1,6 +1,7 @@
 - this fails:
 
 	require 'vips8'
+	$vips_debug = true
 	Vips::cache_set_max 0
 	im = Vips::Image.new_from_file "/home/john/pics/k2.jpg"
 	puts ""
@@ -16,6 +17,13 @@
   we should, we are making a new ruby wrapping of a gobject
 
   see examples/test_leak5.rb
+
+  experiment with adding Vips::cache_print, makes it easier to see which refs
+  are held by the cache
+
+
+
+
 
 - see https://github.com/mvz/gir_ffi/issues/54
 

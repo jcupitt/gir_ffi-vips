@@ -9,7 +9,7 @@ Vips::init($PROGRAM_NAME)
 puts ""
 puts "** creating operation:"
 op = Vips::Operation.new "jpegload"
-op.set_property "filename", "/home/john/pics/k2.jpg"
+op.set_property "filename", "/data/john/pics/k2.jpg"
 Vips::Object::print_all
 
 puts ""
