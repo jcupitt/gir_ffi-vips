@@ -1,3 +1,14 @@
+- need to unwrap RefString
+
+  try
+
+	require 'vips8'
+	a = Vips::Image.new_from_file "/data/john/pics/poosausage.jpg"
+	a.get_value "exif-ifd0-Orientation"
+	=> #<Vips::RefString:0x000000033379f0 @struct=# ...
+
+  added something to unwrap, but it's not working? check
+
 - this fails:
 
 	require 'vips8'

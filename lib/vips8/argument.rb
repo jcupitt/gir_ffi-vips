@@ -6,6 +6,7 @@ module Vips
     TYPE_ARRAY_DOUBLE = GObject::type_from_name "VipsArrayDouble"
     TYPE_ARRAY_IMAGE = GObject::type_from_name "VipsArrayImage"
     TYPE_BLOB = GObject::type_from_name "VipsBlob"
+    TYPE_REF_STRING = GObject::type_from_name "VipsRefString"
     TYPE_IMAGE = GObject::type_from_name "VipsImage"
     TYPE_OPERATION = GObject::type_from_name "VipsOperation"
     TYPE_INTERPOLATE = GObject::type_from_name "VipsInterpolate"
@@ -76,7 +77,7 @@ module Vips
 
         def self.unwrap value
             [Vips::Blob, Vips::ArrayDouble, Vips::ArrayImage, 
-                Vips::ArrayInt].each do |cls|
+                Vips::ArrayInt, Vips::RefString].each do |cls|
                 if value.is_a? cls
                     value = value.get
                     break 
