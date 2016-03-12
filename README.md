@@ -7,7 +7,7 @@ Ruby binding for the vips8 API made with
 This binding works well but currently has some problems with unreferencing,
 so you'll see small memory leaks, up to about 20 bytes per operation call. 
 If you want something that does not leak,
-you need [ruby-vips](https://github.com/jcupitt/ruby-vips).
+you need [ruby-vips8](https://github.com/jcupitt/ruby-vips8).
 
 # To try it out
 

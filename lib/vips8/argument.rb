@@ -17,7 +17,7 @@ module Vips
         def initialize(op, prop)
             @op = op
             @prop = prop
-            @name = prop.name.tr '-', '_'
+            @name = prop.get_name.tr '-', '_'
             @flags = op.get_argument_flags @name
             # we need a bit pattern, not a symbolic name
             @flags = Vips::ArgumentFlags.to_native @flags, 1
